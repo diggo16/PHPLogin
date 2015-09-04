@@ -9,8 +9,13 @@ class LoginView {
 	private static $cookiePassword = 'LoginView::CookiePassword';
 	private static $keep = 'LoginView::KeepMeLoggedIn';
 	private static $messageId = 'LoginView::Message';
+        
+        private static  $controller;
 
-	
+        public function __construct() {
+            require_once 'controller/Controller.php';
+            self::$controller = new Controller();
+        }
 
 	/**
 	 * Create HTTP response
@@ -21,8 +26,29 @@ class LoginView {
 	 */
 	public function response() {
 		$message = '';
+                $response = "";
+                // If the login button is pushed
+                if(isset($_POST["LoginView::UserName"]))
+                {
+                    $username = filter_input(INPUT_POST,"LoginView::UserName",FILTER_SANITIZE_STRING);
+                    $password = filter_input(INPUT_POST,"LoginView::Password",FILTER_SANITIZE_STRING);
+                    $message = self::$controller->validateLogin($username, $password);
+                    if($message != "correct")
+                    {
+                        $response = $this->generateLoginFormHTML($message);
+                    }
+                    else
+                    {
+                        //TODO login
+                    }
+                }
+                else
+                {
+                    $response = $this->generateLoginFormHTML($message);
+                }
+                
+                
 		
-		$response = $this->generateLoginFormHTML($message);
 		//$response .= $this->generateLogoutButtonHTML($message);
 		return $response;
 	}
