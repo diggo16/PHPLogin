@@ -11,14 +11,42 @@ class LoginRules {
    
    // Error messages
    private static $usernameMissing = 'Username is missing';
+   private static $passwordMissing = "Password is missing";
+   private static $noMatch = "Wrong name or password";
    
    public function validateUsername($username)
    {
-       $message = "correct";
-       if($username == "")
+        $message = "correct";
+        if($username == "")
         {
             $message = self::$usernameMissing;
         }
         return $message;
+   }
+   public function validatePassword($password)
+   {
+       $message = "correct";
+       if($password == "")
+       {
+           $message = self::$passwordMissing;
+       }
+       return $message;
+   }
+   public function getCorrectMessage($usernameMsg, $passwordMsg)
+   {
+       $message = "";
+       if($usernameMsg != "correct")
+       {
+            $message = $usernameMsg;
+       }
+       else if($passwordMsg != "correct")
+       {
+           $message = $passwordMsg;
+       }
+       else if($usernameMsg != self::$username && $passwordMsg != self::$password)
+       {
+           $message = self::$noMatch;
+       }
+       return $message;
    }
 }

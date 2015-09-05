@@ -17,6 +17,11 @@ class Controller
     private $loginView;
     private $dateTimeView;
     private $layoutView;
+    
+    private $username;
+    private $password;
+    private $loginButton;
+    private $logoutButton;
     public function __construct() {
         require_once 'model/LoginRules.php';
         require_once('view/LoginView.php');
@@ -25,22 +30,32 @@ class Controller
         
         $this->loginRules = new LoginRules();
     }
-   public function validateLogin($username, $password)
+   public function validateLogin()
    {
-       $message = $this->loginRules->validateUsername($username);
+       $usernameMessage = $this->loginRules->validateUsername($this->username);
+       $passwordMessage = $this->loginRules->validatePassword($this->password);
+       $message = $this->loginRules->getCorrectMessage($usernameMessage, $passwordMessage);
        return $message;
    }
    public function start()
    {
+       $message = "";
         $this->loginView = new LoginView();
+        $this->username = $this->loginView->getUsername();
+        $this->password = $this->loginView->getPassword();
+        $this->loginButton = $this->loginView->isLoginButtonPushed();
+        if($this->loginButton == true)
+        {
+            $message = $this->validateLogin();
+        }
+        
+        $this->loginView->setInfo($this->username, $message, false);
+        
         $this->dateTimeView = new DateTimeView();
         $this->layoutView = new LayoutView();
       //MAKE SURE ERRORS ARE SHOWN... MIGHT WANT TO TURN THIS OFF ON A PUBLIC SERVER
         error_reporting(E_ALL);
         ini_set('display_errors', 'On');
-        
-        $username = $this->loginView->getUsername();
-        //$password = 
 
         $this->layoutView->render(false, $this->loginView, $this->dateTimeView); 
    }

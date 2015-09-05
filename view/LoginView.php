@@ -10,13 +10,13 @@ class LoginView {
 	private static $keep = 'LoginView::KeepMeLoggedIn';
 	private static $messageId = 'LoginView::Message';
         
-        private static  $controller;
         private static  $errorMsg;
+        private static $username;
+        private static $message;
+        private static $isLoggedIn;
 
         public function __construct() {
-            require_once 'controller/Controller.php';
             require_once 'ErrorMessages.php';
-            self::$controller = new Controller();
             self::$errorMsg = new ErrorMessages();
         }
 
@@ -28,7 +28,21 @@ class LoginView {
 	 * @return  void BUT writes to standard output and cookies!
 	 */
 	public function response() {
-		$message = '';
+            
+            $response = "";
+            if(self::$isLoggedIn == TRUE)
+            {
+                
+            }
+            else
+            {
+                $response = $this->generateLoginFormHTML(self::$message,self::$username);
+            }
+            return $response;
+            
+            
+            
+		/*$message = '';
                 $response = '';
                 $usernameOutput = "";
                 // If login button is pushed
@@ -48,7 +62,7 @@ class LoginView {
                 }
                 $response = $this->generateLoginFormHTML($message,$usernameOutput);
 		//$response .= $this->generateLogoutButtonHTML($message);
-		return $response;
+		return $response;*/
 	}
 
 	/**
@@ -105,6 +119,29 @@ class LoginView {
                 }
                 return $username;
         }
+        public function getPassword()
+        {
+            $password = "";
+             if(isset($_POST[self::$password]))
+                {
+                    $password = filter_input(INPUT_POST,self::$password,FILTER_SANITIZE_STRING);
+                }
+                return $password;
+        }
+        public function isLoginButtonPushed() 
+        {
+            if(isset($_POST[self::$login]))
+            {
+                return true;
+            }
+            return false;
+        }
+        public function setInfo($username, $message, $isLoggedIn)
+        {
+            self::$username = $username;
+            self::$message = $message;
+            self::$isLoggedIn = $isLoggedIn;
+        }
         private function getString($string)
         {
             if(isset($_POST[$string]))
@@ -120,5 +157,6 @@ class LoginView {
             }
             return "";
         }
+        
 	
 }
