@@ -26,29 +26,23 @@ class LoginView {
 	 */
 	public function response() {
 		$message = '';
-                $response = "";
-                // If the login button is pushed
-                if(isset($_POST["LoginView::UserName"]))
+                $response = '';
+                if(isset($_POST[self::$login]))
                 {
-                    $username = filter_input(INPUT_POST,"LoginView::UserName",FILTER_SANITIZE_STRING);
-                    $password = filter_input(INPUT_POST,"LoginView::Password",FILTER_SANITIZE_STRING);
-                    $message = self::$controller->validateLogin($username, $password);
-                    if($message != "correct")
-                    {
-                        $response = $this->generateLoginFormHTML($message);
+                  
+                    if(isset($_POST[self::$name]) && isset($_POST[self::$password]))
+                    { 
+                       if($_POST[self::$name] == "" && $_POST[self::$password] == "")
+                       {
+                           $message = "Username is missing";
+                       }   
                     }
                     else
                     {
-                        //TODO login
+                        $message = "Username is missing";
                     }
                 }
-                else
-                {
-                    $response = $this->generateLoginFormHTML($message);
-                }
-                
-                
-		
+                $response = $this->generateLoginFormHTML($message);
 		//$response .= $this->generateLogoutButtonHTML($message);
 		return $response;
 	}
@@ -98,5 +92,14 @@ class LoginView {
 	private function getRequestUserName() {
 		//RETURN REQUEST VARIABLE: USERNAME
 	}
+        public function getUsername()
+        {
+            $username = "";
+             if(isset($_POST["LoginView::UserName"]))
+                {
+                    $username = filter_input(INPUT_POST,"LoginView::UserName",FILTER_SANITIZE_STRING);
+                }
+                return $username;
+        }
 	
 }
