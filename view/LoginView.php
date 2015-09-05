@@ -11,10 +11,13 @@ class LoginView {
 	private static $messageId = 'LoginView::Message';
         
         private static  $controller;
+        private static  $errorMsg;
 
         public function __construct() {
             require_once 'controller/Controller.php';
+            require_once 'ErrorMessages.php';
             self::$controller = new Controller();
+            self::$errorMsg = new ErrorMessages();
         }
 
 	/**
@@ -27,22 +30,23 @@ class LoginView {
 	public function response() {
 		$message = '';
                 $response = '';
+                $usernameOutput = "";
+                // If login button is pushed
                 if(isset($_POST[self::$login]))
                 {
-                  
-                    if(isset($_POST[self::$name]) && isset($_POST[self::$password]))
-                    { 
-                       if($_POST[self::$name] == "" && $_POST[self::$password] == "")
-                       {
-                           $message = "Username is missing";
-                       }   
-                    }
-                    else
-                    {
-                        $message = "Username is missing";
-                    }
+                   $username = $this->getString(self::$name);
+                   $password = $this->getString(self::$password);
+                   if($username == "")
+                   {
+                       $message = self::$errorMsg->getUsernameMissingMsg();
+                   }
+                   if($password == "" && $message != self::$errorMsg->getUsernameMissingMsg())
+                   {
+                       $usernameOutput = $username;
+                       $message = self::$errorMsg->getPasswordMissingMsg();
+                   }
                 }
-                $response = $this->generateLoginFormHTML($message);
+                $response = $this->generateLoginFormHTML($message,$usernameOutput);
 		//$response .= $this->generateLogoutButtonHTML($message);
 		return $response;
 	}
@@ -66,7 +70,7 @@ class LoginView {
 	* @param $message, String output message
 	* @return  void, BUT writes to standard output!
 	*/
-	private function generateLoginFormHTML($message) {
+	private function generateLoginFormHTML($message, $username) {
 		return '
 			<form method="post" > 
 				<fieldset>
@@ -74,7 +78,7 @@ class LoginView {
 					<p id="' . self::$messageId . '">' . $message . '</p>
 					
 					<label for="' . self::$name . '">Username :</label>
-					<input type="text" id="' . self::$name . '" name="' . self::$name . '" value="" />
+					<input type="text" id="' . self::$name . '" name="' . self::$name . '" value="' . $username . '"/>
 
 					<label for="' . self::$password . '">Password :</label>
 					<input type="password" id="' . self::$password . '" name="' . self::$password . '" />
@@ -95,11 +99,26 @@ class LoginView {
         public function getUsername()
         {
             $username = "";
-             if(isset($_POST["LoginView::UserName"]))
+             if(isset($_POST[self::$name]))
                 {
-                    $username = filter_input(INPUT_POST,"LoginView::UserName",FILTER_SANITIZE_STRING);
+                    $username = filter_input(INPUT_POST,self::$name,FILTER_SANITIZE_STRING);
                 }
                 return $username;
+        }
+        private function getString($string)
+        {
+            if(isset($_POST[$string]))
+            {
+                if($_POST[$string] == "")
+                {
+                    return "";
+                }
+                else
+                {
+                    return $_POST[$string];
+                }
+            }
+            return "";
         }
 	
 }
