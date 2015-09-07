@@ -50,4 +50,12 @@ class LoginRules {
        }
        return $message;
    }
+   public function ifCorrectLogin($username, $password) 
+   {
+      if(self::$username == $username && self::$password == $password)
+      {
+          return true;
+      }
+      return false;
+   }
 }
