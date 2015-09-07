@@ -32,7 +32,7 @@ class LoginRules {
        }
        return $message;
    }
-   public function getCorrectMessage($usernameMsg, $passwordMsg)
+   public function getCorrectMessage($usernameMsg, $user, $passwordMsg, $password)
    {
        $message = "";
        if($usernameMsg != "correct")
@@ -43,7 +43,8 @@ class LoginRules {
        {
            $message = $passwordMsg;
        }
-       else if($usernameMsg != self::$username && $passwordMsg != self::$password)
+       
+       else if($user != self::$username || $password != self::$password)
        {
            $message = self::$noMatch;
        }

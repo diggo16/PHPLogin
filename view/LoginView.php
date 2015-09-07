@@ -32,37 +32,13 @@ class LoginView {
             $response = "";
             if(self::$isLoggedIn == TRUE)
             {
-                
+                $response = $this->generateLogoutButtonHTML(self::$message);
             }
             else
             {
                 $response = $this->generateLoginFormHTML(self::$message,self::$username);
             }
             return $response;
-            
-            
-            
-		/*$message = '';
-                $response = '';
-                $usernameOutput = "";
-                // If login button is pushed
-                if(isset($_POST[self::$login]))
-                {
-                   $username = $this->getString(self::$name);
-                   $password = $this->getString(self::$password);
-                   if($username == "")
-                   {
-                       $message = self::$errorMsg->getUsernameMissingMsg();
-                   }
-                   if($password == "" && $message != self::$errorMsg->getUsernameMissingMsg())
-                   {
-                       $usernameOutput = $username;
-                       $message = self::$errorMsg->getPasswordMissingMsg();
-                   }
-                }
-                $response = $this->generateLoginFormHTML($message,$usernameOutput);
-		//$response .= $this->generateLogoutButtonHTML($message);
-		return $response;*/
 	}
 
 	/**
@@ -141,6 +117,10 @@ class LoginView {
             self::$username = $username;
             self::$message = $message;
             self::$isLoggedIn = $isLoggedIn;
+        }
+        public function getIsLoggedIn()
+        {
+            return self::$isLoggedIn;
         }
         private function getString($string)
         {
