@@ -10,7 +10,7 @@ class LoginView {
 	private static $keep = 'LoginView::KeepMeLoggedIn';
 	private static $messageId = 'LoginView::Message';
         
-        private static  $errorMsg;
+        private static $errorMsg;
         private static $username;
         private static $message;
         private static $isLoggedIn;
@@ -19,7 +19,6 @@ class LoginView {
             require_once 'ErrorMessages.php';
             self::$errorMsg = new ErrorMessages();
         }
-
 	/**
 	 * Create HTTP response
 	 *
@@ -40,7 +39,6 @@ class LoginView {
             }
             return $response;
 	}
-
 	/**
 	* Generate HTML code on the output buffer for the logout button
 	* @param $message, String output message
@@ -54,7 +52,6 @@ class LoginView {
 			</form>
 		';
 	}
-	
 	/**
 	* Generate HTML code on the output buffer for the logout button
 	* @param $message, String output message
@@ -81,32 +78,24 @@ class LoginView {
 			</form>
 		';
 	}
-	
 	//CREATE GET-FUNCTIONS TO FETCH REQUEST VARIABLES
 	private function getRequestUserName() {
 		//RETURN REQUEST VARIABLE: USERNAME
 	}
         public function getUsername()
         {
-            $username = "";
-             if(isset($_POST[self::$name]))
-                {
-                    $username = filter_input(INPUT_POST,self::$name,FILTER_SANITIZE_STRING);
-                }
-                return $username;
+            $username = filter_input(INPUT_POST,self::$name,FILTER_SANITIZE_STRING);
+            return $username;
         }
         public function getPassword()
         {
-            $password = "";
-             if(isset($_POST[self::$password]))
-                {
-                    $password = filter_input(INPUT_POST,self::$password,FILTER_SANITIZE_STRING);
-                }
-                return $password;
+            $password = filter_input(INPUT_POST,self::$password,FILTER_SANITIZE_STRING);
+            return $password;
         }
         public function isLoginButtonPushed() 
         {
-            if(isset($_POST[self::$login]))
+            $login = filter_input(INPUT_POST,self::$login,FILTER_SANITIZE_STRING);
+            if($login == "login")
             {
                 return true;
             }
@@ -121,22 +110,5 @@ class LoginView {
         public function getIsLoggedIn()
         {
             return self::$isLoggedIn;
-        }
-        private function getString($string)
-        {
-            if(isset($_POST[$string]))
-            {
-                if($_POST[$string] == "")
-                {
-                    return "";
-                }
-                else
-                {
-                    return $_POST[$string];
-                }
-            }
-            return "";
-        }
-        
-	
+        }	
 }
