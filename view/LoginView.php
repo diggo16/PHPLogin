@@ -36,8 +36,20 @@ class LoginView {
 	public function response() {    
             
             $response = "";
-            
-            if($this->isSessionLoggedIn())
+            if($this->isLogOutButtonPushed())
+            {
+                if($this->isSessionExist())
+                {
+                    $response = $this->generateLoginFormHTML("Bye bye!","");
+                }
+                else 
+                {
+                   $response = $this->generateLoginFormHTML("",""); 
+                }
+                session_destroy();
+                
+            }
+            else if($this->isSessionLoggedIn())
             {
                 $response = $this->generateLogoutButtonHTML("");
             }
@@ -130,6 +142,14 @@ class LoginView {
             }
             return false;
         }
+        public function isLogoutButtonPushed()
+        {
+           if(isset($_POST[self::$logout]))
+            {
+                return true;
+            }
+            return false; 
+        }
         public function setInfo($username, $message, $isLoggedIn)
         {
             self::$username = $username;
@@ -154,6 +174,14 @@ class LoginView {
                 }
             }
             return false;   
+        }
+        private function isSessionExist()
+        {
+            if(isset($_SESSION[self::$sessionName]) && isset($_SESSION[self::$sessionPassword]))
+            {
+                return true;
+            }
+            return false;
         }
         private function makeStringSecure($str)
         {
