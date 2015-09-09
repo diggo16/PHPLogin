@@ -14,10 +14,13 @@ class LoginView {
         private static $username;
         private static $message;
         private static $isLoggedIn;
+        private static $controller;
 
         public function __construct() {
             require_once 'ErrorMessages.php';
+            require_once 'controller/Controller.php';
             self::$errorMsg = new ErrorMessages();
+            self::$controller = new Controller();
         }
 
 	/**
@@ -29,7 +32,20 @@ class LoginView {
 	 */
 	public function response() {
             
+            
+            
             $response = "";
+            if($this->isLoginButtonPushed())
+            {
+                self::$controller->login($this->getUsername(), $this->getPassword());
+                $response = $this->generateLoginFormHTML(self::$message,self::$username);
+            }
+            else
+            {
+                $response = $this->generateLoginFormHTML(self::$message,self::$username);
+            }
+            
+            /*
             if(self::$isLoggedIn == TRUE)
             {
                 
@@ -37,7 +53,7 @@ class LoginView {
             else
             {
                 $response = $this->generateLoginFormHTML(self::$message,self::$username);
-            }
+            }*/
             return $response;
 	}
 
@@ -89,12 +105,12 @@ class LoginView {
         public function getUsername()
         {
             $username = filter_input(INPUT_POST,self::$name,FILTER_SANITIZE_STRING);;
-                return $username;
+            return $username;
         }
         public function getPassword()
         {
-                    $password = filter_input(INPUT_POST,self::$password,FILTER_SANITIZE_STRING);
-                return $password;
+            $password = filter_input(INPUT_POST,self::$password,FILTER_SANITIZE_STRING);
+            return $password;
         }
         public function isLoginButtonPushed() 
         {
@@ -109,22 +125,5 @@ class LoginView {
             self::$username = $username;
             self::$message = $message;
             self::$isLoggedIn = $isLoggedIn;
-        }
-        private function getString($string)
-        {
-            if(isset($_POST[$string]))
-            {
-                if($_POST[$string] == "")
-                {
-                    return "";
-                }
-                else
-                {
-                    return $_POST[$string];
-                }
-            }
-            return "";
-        }
-        
-	
+        }       	
 }
