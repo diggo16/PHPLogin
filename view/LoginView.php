@@ -18,14 +18,14 @@ class LoginView {
         private static $controller;
         private static $user;
 
-        public function __construct() {
+        public function __construct() 
+        {
             require_once 'ErrorMessages.php';
             require_once 'controller/Controller.php';
             self::$errorMsg = new ErrorMessages();
             self::$controller = new Controller();
             self::$user = new User();
         }
-
 	/**
 	 * Create HTTP response
 	 *
@@ -124,16 +124,28 @@ class LoginView {
 	private function getRequestUserName() {
 		//RETURN REQUEST VARIABLE: USERNAME
 	}
+        /**
+         * Get the username
+         * @return String $username
+         */
         public function getUsername()
         {
             $username = filter_input(INPUT_POST,self::$name,FILTER_SANITIZE_STRING);
             return $username;
         }
+        /**
+         * Get the password
+         * @return String $password
+         */
         public function getPassword()
         {
             $password = filter_input(INPUT_POST,self::$password,FILTER_SANITIZE_STRING);
             return $password;
         }
+        /**
+         * Check if the login button is pushed
+         * @return boolean
+         */
         public function isLoginButtonPushed() 
         {
             if(isset($_POST[self::$login]))
@@ -142,6 +154,10 @@ class LoginView {
             }
             return false;
         }
+        /**
+         * Check if the logout button is pushed
+         * @return boolean
+         */
         public function isLogoutButtonPushed()
         {
            if(isset($_POST[self::$logout]))
@@ -150,16 +166,17 @@ class LoginView {
             }
             return false; 
         }
-        public function setInfo($username, $message, $isLoggedIn)
-        {
-            self::$username = $username;
-            self::$message = $message;
-            self::$isLoggedIn = $isLoggedIn;
-        }
+        /**
+         * Get if the user is logged in or not
+         * @return Boolean isLoggedIn
+         */
         public function isLoggedIn() 
         {
             return self::$user->isLoggedIn();
         }
+        /*
+         * Check if there is correct session info
+         */
         private function isSessionLoggedIn()
         {
             if(isset($_SESSION[self::$sessionName]) && isset($_SESSION[self::$sessionPassword]))
@@ -175,6 +192,9 @@ class LoginView {
             }
             return false;   
         }
+        /*
+         * Check if there exist a session
+         */
         private function isSessionExist()
         {
             if(isset($_SESSION[self::$sessionName]) && isset($_SESSION[self::$sessionPassword]))
@@ -183,6 +203,9 @@ class LoginView {
             }
             return false;
         }
+        /*
+         * Create a secure string
+         */
         private function makeStringSecure($str)
         {
             $newStr = htmlentities($str);

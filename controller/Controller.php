@@ -19,7 +19,11 @@ class Controller
     private $username;
     private $password;
     private static $user;
-    public function __construct() {
+    /**
+     * Initialize other classes
+     */
+    public function __construct() 
+    {
         require_once 'model/LoginRules.php';
         require_once 'model/User.php';
         
@@ -31,13 +35,19 @@ class Controller
        $message = $this->loginRules->validateLogin($this->username, $this->password);
        return $message;
    }
+   /**
+    * Check if the username and password is correct,
+    * else give a proper error message
+    * @param String $username
+    * @param String $password
+    * @return User $user
+    */
    public function login($username, $password) 
     {
        $this->username = $username;
        $this->password = $password;
        $message = $this->validateLogin();
-       $this->loginView = new LoginView();
-       $this->loginView->setInfo($this->username, $message, false);    
+       $this->loginView = new LoginView(); 
        $loggedIn = false;
        if($message == "")
        {
