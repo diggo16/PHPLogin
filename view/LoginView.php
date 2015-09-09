@@ -37,7 +37,10 @@ class LoginView {
             $response = "";
             if($this->isLoginButtonPushed())
             {
-                self::$controller->login($this->getUsername(), $this->getPassword());
+                if(self::$controller->login($this->getUsername(), $this->getPassword()))
+                {
+                    $this->generateLogoutButtonHTML("Welcome");
+                }
                 $response = $this->generateLoginFormHTML(self::$message,self::$username);
             }
             else
