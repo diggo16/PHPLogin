@@ -1,5 +1,4 @@
 <?php
-
 class LoginView {
 	private static $login = 'LoginView::Login';
 	private static $logout = 'LoginView::Logout';
@@ -9,6 +8,8 @@ class LoginView {
 	private static $cookiePassword = 'LoginView::CookiePassword';
 	private static $keep = 'LoginView::KeepMeLoggedIn';
 	private static $messageId = 'LoginView::Message';
+        private static $sessionName = 'Session::SessionName';
+        private static $sessionPassword = 'Session::SessionPassword';
         
         private static  $errorMsg;
         private static $username;
@@ -35,22 +36,34 @@ class LoginView {
 	public function response() {    
             
             $response = "";
-            if($this->isLoginButtonPushed())
+            
+            if($this->isSessionLoggedIn())
             {
-                self::$user = self::$controller->login($this->getUsername(), $this->getPassword());
-                if(self::$user->isLoggedIn())
-                {
-                    $response = $this->generateLogoutButtonHTML("Welcome");
-                }
-                else
-                {
-                    $response = $this->generateLoginFormHTML(self::$user->getMessage(),self::$user->getUsername());
-                }        
+                $response = $this->generateLogoutButtonHTML("");
             }
             else
             {
-                $response = $this->generateLoginFormHTML("","");
+                if($this->isLoginButtonPushed())
+                {
+                    self::$user = self::$controller->login($this->getUsername(), $this->getPassword());
+                    if(self::$user->isLoggedIn())
+                    {
+                        $response = $this->generateLogoutButtonHTML("Welcome");
+                        // Add session info
+                        $_SESSION[self::$sessionName] = self::$user->getUsername();
+                        $_SESSION[self::$sessionPassword] = self::$user->getPassword();
+                    }
+                    else
+                    {
+                        $response = $this->generateLoginFormHTML(self::$user->getMessage(),self::$user->getUsername());
+                    }        
+                }
+                else
+                {
+                    $response = $this->generateLoginFormHTML("","");
+                }
             }
+           
             return $response;
 	}
 
@@ -101,7 +114,7 @@ class LoginView {
 	}
         public function getUsername()
         {
-            $username = filter_input(INPUT_POST,self::$name,FILTER_SANITIZE_STRING);;
+            $username = filter_input(INPUT_POST,self::$name,FILTER_SANITIZE_STRING);
             return $username;
         }
         public function getPassword()
@@ -126,5 +139,26 @@ class LoginView {
         public function isLoggedIn() 
         {
             return self::$user->isLoggedIn();
-        }        
+        }
+        private function isSessionLoggedIn()
+        {
+            if(isset($_SESSION[self::$sessionName]) && isset($_SESSION[self::$sessionPassword]))
+            {
+                $username = $this->makeStringSecure($_SESSION[self::$sessionName]);
+                $password = $this->makeStringSecure($_SESSION[self::$sessionPassword]);
+                
+                self::$user = self::$controller->login($username, $password);
+                if(self::$user->isLoggedIn())
+                {
+                    return true;
+                }
+            }
+            return false;   
+        }
+        private function makeStringSecure($str)
+        {
+            $newStr = htmlentities($str);
+            
+            return $newStr;
+        }
 }
