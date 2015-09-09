@@ -29,9 +29,7 @@ class Controller
     }
    private function validateLogin()
    {
-       $usernameMessage = $this->loginRules->validateUsername($this->username);
-       $passwordMessage = $this->loginRules->validatePassword($this->password);
-       $message = $this->loginRules->getCorrectMessage($usernameMessage, $passwordMessage);
+       $message = $this->loginRules->validateLogin($this->username, $this->password);
        return $message;
    }
    public function login($username, $password) 
@@ -41,5 +39,11 @@ class Controller
        $message = $this->validateLogin();
        $this->loginView = new LoginView();
        $this->loginView->setInfo($this->username, $message, false);
+       
+       if($message == "")
+       {
+           return true;
+       }
+       return false;
    }
 }
