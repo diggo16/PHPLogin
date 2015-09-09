@@ -32,9 +32,7 @@ class LoginView {
 	 *
 	 * @return  void BUT writes to standard output and cookies!
 	 */
-	public function response() {
-            
-            
+	public function response() {    
             
             $response = "";
             if($this->isLoginButtonPushed())
@@ -47,23 +45,12 @@ class LoginView {
                 else
                 {
                     $response = $this->generateLoginFormHTML(self::$user->getMessage(),self::$user->getUsername());
-                }
-                
+                }        
             }
             else
             {
                 $response = $this->generateLoginFormHTML("","");
             }
-            
-            /*
-            if(self::$isLoggedIn == TRUE)
-            {
-                
-            }
-            else
-            {
-                $response = $this->generateLoginFormHTML(self::$message,self::$username);
-            }*/
             return $response;
 	}
 
@@ -135,5 +122,9 @@ class LoginView {
             self::$username = $username;
             self::$message = $message;
             self::$isLoggedIn = $isLoggedIn;
-        }       	
+        }
+        public function isLoggedIn() 
+        {
+            return self::$user->isLoggedIn();
+        }        
 }
