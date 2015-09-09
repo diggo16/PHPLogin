@@ -15,17 +15,16 @@ class Controller
 {
     private $loginRules;
     private $loginView;
-    private $dateTimeView;
-    private $layoutView;
     
     private $username;
     private $password;
-    private $loginButton;
-    private $logoutButton;
+    private static $user;
     public function __construct() {
         require_once 'model/LoginRules.php';
+        require_once 'model/User.php';
         
         $this->loginRules = new LoginRules();
+        self::$user = new User();
     }
    private function validateLogin()
    {
@@ -38,12 +37,13 @@ class Controller
        $this->password = $password;
        $message = $this->validateLogin();
        $this->loginView = new LoginView();
-       $this->loginView->setInfo($this->username, $message, false);
-       
+       $this->loginView->setInfo($this->username, $message, false);    
+       $loggedIn = false;
        if($message == "")
        {
-           return true;
+           $loggedIn = true;
        }
-       return false;
+       self::$user->setNewInfo($username, $password, $loggedIn, $message);
+       return self::$user;
    }
 }

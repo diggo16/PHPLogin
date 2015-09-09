@@ -15,12 +15,14 @@ class LoginView {
         private static $message;
         private static $isLoggedIn;
         private static $controller;
+        private static $user;
 
         public function __construct() {
             require_once 'ErrorMessages.php';
             require_once 'controller/Controller.php';
             self::$errorMsg = new ErrorMessages();
             self::$controller = new Controller();
+            self::$user = new User();
         }
 
 	/**
@@ -37,19 +39,20 @@ class LoginView {
             $response = "";
             if($this->isLoginButtonPushed())
             {
-                if(self::$controller->login($this->getUsername(), $this->getPassword()))
+                self::$user = self::$controller->login($this->getUsername(), $this->getPassword());
+                if(self::$user->isLoggedIn())
                 {
-                    $this->generateLogoutButtonHTML("Welcome");
+                    $response = $this->generateLogoutButtonHTML("Welcome");
                 }
                 else
                 {
-                    $response = $this->generateLoginFormHTML(self::$message,self::$username);
+                    $response = $this->generateLoginFormHTML(self::$user->getMessage(),self::$user->getUsername());
                 }
                 
             }
             else
             {
-                $response = $this->generateLoginFormHTML(self::$message,self::$username);
+                $response = $this->generateLoginFormHTML("","");
             }
             
             /*
