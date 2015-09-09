@@ -1,7 +1,6 @@
 <?php
 
-class LoginView 
-{
+class LoginView {
 	private static $login = 'LoginView::Login';
 	private static $logout = 'LoginView::Logout';
 	private static $name = 'LoginView::UserName';
@@ -11,16 +10,16 @@ class LoginView
 	private static $keep = 'LoginView::KeepMeLoggedIn';
 	private static $messageId = 'LoginView::Message';
         
-        private static $errorMsg;
+        private static  $errorMsg;
         private static $username;
         private static $message;
         private static $isLoggedIn;
 
-        public function __construct() 
-        {
+        public function __construct() {
             require_once 'ErrorMessages.php';
             self::$errorMsg = new ErrorMessages();
         }
+
 	/**
 	 * Create HTTP response
 	 *
@@ -28,27 +27,50 @@ class LoginView
 	 *
 	 * @return  void BUT writes to standard output and cookies!
 	 */
-	public function response() 
-        {
+	public function response() {
             
             $response = "";
             if(self::$isLoggedIn == TRUE)
             {
-                $response = $this->generateLogoutButtonHTML(self::$message);
+                
             }
             else
             {
                 $response = $this->generateLoginFormHTML(self::$message,self::$username);
             }
             return $response;
+            
+            
+            
+		/*$message = '';
+                $response = '';
+                $usernameOutput = "";
+                // If login button is pushed
+                if(isset($_POST[self::$login]))
+                {
+                   $username = $this->getString(self::$name);
+                   $password = $this->getString(self::$password);
+                   if($username == "")
+                   {
+                       $message = self::$errorMsg->getUsernameMissingMsg();
+                   }
+                   if($password == "" && $message != self::$errorMsg->getUsernameMissingMsg())
+                   {
+                       $usernameOutput = $username;
+                       $message = self::$errorMsg->getPasswordMissingMsg();
+                   }
+                }
+                $response = $this->generateLoginFormHTML($message,$usernameOutput);
+		//$response .= $this->generateLogoutButtonHTML($message);
+		return $response;*/
 	}
+
 	/**
 	* Generate HTML code on the output buffer for the logout button
 	* @param $message, String output message
 	* @return  void, BUT writes to standard output!
 	*/
-	private function generateLogoutButtonHTML($message) 
-        {
+	private function generateLogoutButtonHTML($message) {
 		return '
 			<form  method="post" >
 				<p id="' . self::$messageId . '">' . $message .'</p>
@@ -56,13 +78,13 @@ class LoginView
 			</form>
 		';
 	}
+	
 	/**
 	* Generate HTML code on the output buffer for the logout button
 	* @param $message, String output message
 	* @return  void, BUT writes to standard output!
 	*/
-	private function generateLoginFormHTML($message, $username) 
-        {
+	private function generateLoginFormHTML($message, $username) {
 		return '
 			<form method="post" > 
 				<fieldset>
@@ -83,67 +105,58 @@ class LoginView
 			</form>
 		';
 	}
+	
 	//CREATE GET-FUNCTIONS TO FETCH REQUEST VARIABLES
 	private function getRequestUserName() {
 		//RETURN REQUEST VARIABLE: USERNAME
 	}
-        /*
-         * Get the POST variable "Login::UserName"
-         */
         public function getUsername()
         {
-            $username = filter_input(INPUT_POST,self::$name,FILTER_SANITIZE_STRING);
-            return $username;
+            $username = "";
+             if(isset($_POST[self::$name]))
+                {
+                    $username = filter_input(INPUT_POST,self::$name,FILTER_SANITIZE_STRING);
+                }
+                return $username;
         }
-        /*
-         * Get the POST variable "Login::Password"
-         */
         public function getPassword()
         {
-            $password = filter_input(INPUT_POST,self::$password,FILTER_SANITIZE_STRING);
-            return $password;
+            $password = "";
+             if(isset($_POST[self::$password]))
+                {
+                    $password = filter_input(INPUT_POST,self::$password,FILTER_SANITIZE_STRING);
+                }
+                return $password;
         }
-        /*
-         * Check if the login button is pushed
-         */
         public function isLoginButtonPushed() 
         {
-            $login = filter_input(INPUT_POST,self::$login,FILTER_SANITIZE_STRING);
-            if($login == "login")
+            if(isset($_POST[self::$login]))
             {
                 return true;
             }
             return false;
         }
-        public function isLogoutButtonPushed() 
-        {
-            $logout = filter_input(INPUT_POST,self::$logout,FILTER_SANITIZE_STRING);
-            if($logout == "logout")
-            {
-                return true;
-            }
-            return false;
-        }
-        public function keepBoxChecked() 
-        {
-            $checkBox = filter_input(INPUT_POST,self::$keep);
-            if($checkBox == "on")
-            {
-                return true;
-            }
-            return false;
-        }
-        /*
-         * set the username, the output message and if you are logged in
-         */
         public function setInfo($username, $message, $isLoggedIn)
         {
             self::$username = $username;
             self::$message = $message;
             self::$isLoggedIn = $isLoggedIn;
         }
-        public function getIsLoggedIn()
+        private function getString($string)
         {
-            return self::$isLoggedIn;
+            if(isset($_POST[$string]))
+            {
+                if($_POST[$string] == "")
+                {
+                    return "";
+                }
+                else
+                {
+                    return $_POST[$string];
+                }
+            }
+            return "";
         }
+        
+	
 }
