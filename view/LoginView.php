@@ -39,30 +39,6 @@ class LoginView {
                 $response = $this->generateLoginFormHTML(self::$message,self::$username);
             }
             return $response;
-            
-            
-            
-		/*$message = '';
-                $response = '';
-                $usernameOutput = "";
-                // If login button is pushed
-                if(isset($_POST[self::$login]))
-                {
-                   $username = $this->getString(self::$name);
-                   $password = $this->getString(self::$password);
-                   if($username == "")
-                   {
-                       $message = self::$errorMsg->getUsernameMissingMsg();
-                   }
-                   if($password == "" && $message != self::$errorMsg->getUsernameMissingMsg())
-                   {
-                       $usernameOutput = $username;
-                       $message = self::$errorMsg->getPasswordMissingMsg();
-                   }
-                }
-                $response = $this->generateLoginFormHTML($message,$usernameOutput);
-		//$response .= $this->generateLogoutButtonHTML($message);
-		return $response;*/
 	}
 
 	/**
@@ -112,20 +88,12 @@ class LoginView {
 	}
         public function getUsername()
         {
-            $username = "";
-             if(isset($_POST[self::$name]))
-                {
-                    $username = filter_input(INPUT_POST,self::$name,FILTER_SANITIZE_STRING);
-                }
+            $username = filter_input(INPUT_POST,self::$name,FILTER_SANITIZE_STRING);;
                 return $username;
         }
         public function getPassword()
         {
-            $password = "";
-             if(isset($_POST[self::$password]))
-                {
                     $password = filter_input(INPUT_POST,self::$password,FILTER_SANITIZE_STRING);
-                }
                 return $password;
         }
         public function isLoginButtonPushed() 
