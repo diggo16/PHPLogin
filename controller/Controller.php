@@ -76,4 +76,33 @@ class Controller
    {
        return $this->correctUser->getSessionId();
    }
+   public function Authenticate($username, $password)
+   {
+       $this->username = $username;
+       $this->password = $password;
+       $message = $this->validateLogin();
+       $this->loginView = new LoginView(); 
+       $loggedIn = false;
+       $sessionId = "";
+       if($message == "")
+       {
+           $loggedIn = true;
+           $sessionId = $this->session->generateUniqueID($this->username, $this->password);
+       }
+       self::$user->setNewInfo($this->username, $this->password, $loggedIn, $message);
+       self::$user->setSessionId($sessionId);
+       return self::$user;
+   }
+   /**
+    * Log out the user
+    * @param String $sessionUsername
+    * @param String $sessionPassword
+    */
+   public function logout($sessionUsername, $sessionPassword)
+   {
+        // Remove session
+        $this->session->removeSession($sessionUsername);
+        $this->session->removeSession($sessionPassword);
+        $this->session->destroySession();
+   }
 }

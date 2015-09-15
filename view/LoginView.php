@@ -15,17 +15,21 @@ class LoginView {
         private static $controller;
         private static $user;
         private $session;
+        private $feedback;
 
         public function __construct() 
         {
             require_once 'ErrorMessages.php';
             require_once 'controller/Controller.php';
             require_once 'Session.php';
+            require_once 'Feedback.php';
             self::$errorMsg = new ErrorMessages();
             self::$controller = new Controller();
             self::$user = new User();
             
+            
             $this->session = new Session();
+            $this->feedback = new Feedback();
         }
 	/**
 	 * Create HTTP response
@@ -37,34 +41,33 @@ class LoginView {
 	public function response() {    
             
             $response = "";
+            // If the logout button is pushed
             if($this->isLogOutButtonPushed())
             {
                 if($this->isSessionExist())
                 {
-                    $response = $this->generateLoginFormHTML("Bye bye!","");
+                    $response = $this->generateLoginFormHTML($this->feedback->getByeMsg(),"");
                 }
                 else 
                 {
                    $response = $this->generateLoginFormHTML("",""); 
                 }
-                // Remove session
-                $this->session->removeSession(self::$sessionName);
-                $this->session->removeSession(self::$sessionPassword);
-                $this->session->destroySession();
-                
+                self::$controller->logout(self::$sessionName, self::$sessionPassword);      
             }
+            // Else if the session is valid
             else if($this->isSessionLoggedIn())
             {
                 $response = $this->generateLogoutButtonHTML("");
             }
             else
             {
+                // If the login button is pushed
                 if($this->isLoginButtonPushed())
                 {
                     self::$user = self::$controller->login($this->getUsername(), $this->getPassword());
                     if(self::$user->isLoggedIn())
                     {
-                        $response = $this->generateLogoutButtonHTML("Welcome");
+                        $response = $this->generateLogoutButtonHTML($this->feedback->getWelcomeMsg());
                         // Add session info                       
                         $this->session->setSession(self::$sessionName, self::$user->getUsername());
                         $this->session->setSession(self::$sessionPassword, self::$user->getPassword());
