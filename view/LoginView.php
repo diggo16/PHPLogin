@@ -11,19 +11,21 @@ class LoginView {
         private static $sessionName = 'Session::SessionName';
         private static $sessionPassword = 'Session::SessionPassword';
         
+        private static $errorMsg;
         private static $controller;
         private static $user;
-        private static $cookies;
+        private $session;
 
         public function __construct() 
         {
+            require_once 'ErrorMessages.php';
             require_once 'controller/Controller.php';
-            require_once 'Cookies.php';
-            require_once 'model/User.php';
+            require_once 'Session.php';
+            self::$errorMsg = new ErrorMessages();
             self::$controller = new Controller();
             self::$user = new User();
-            self::$cookies = new Cookies();
             
+            $this->session = new Session();
         }
 	/**
 	 * Create HTTP response
@@ -32,35 +34,55 @@ class LoginView {
 	 *
 	 * @return  void BUT writes to standard output and cookies!
 	 */
-	public function response() 
-        {           
+	public function response() {    
+            
             $response = "";
-            // If the logout button is pushed
             if($this->isLogOutButtonPushed())
             {
-                $response = $this->logout();
+                if($this->isSessionExist())
+                {
+                    $response = $this->generateLoginFormHTML("Bye bye!","");
+                }
+                else 
+                {
+                   $response = $this->generateLoginFormHTML("",""); 
+                }
+                // Remove session
+                $this->session->removeSession(self::$sessionName);
+                $this->session->removeSession(self::$sessionPassword);
+                $this->session->destroySession();
+                
             }
-            else if($this->isCookiesLoggedIn())
-            {
-                $response = $this->generateLogoutButtonHTML("Welcome back with cookie");
-            }
-            // If the session is logged in
             else if($this->isSessionLoggedIn())
             {
                 $response = $this->generateLogoutButtonHTML("");
             }
-            // If the login button is pushed
-            else if($this->isLoginButtonPushed())
-            {
-                $response = $this->login();       
-            }
-            // If you are not logged in and haven't pushed any buttons
             else
             {
-                $response = $this->generateLoginFormHTML("","");
-            }     
+                if($this->isLoginButtonPushed())
+                {
+                    self::$user = self::$controller->login($this->getUsername(), $this->getPassword());
+                    if(self::$user->isLoggedIn())
+                    {
+                        $response = $this->generateLogoutButtonHTML("Welcome");
+                        // Add session info                       
+                        $this->session->setSession(self::$sessionName, self::$user->getUsername());
+                        $this->session->setSession(self::$sessionPassword, self::$user->getPassword());
+                    }
+                    else
+                    {
+                        $response = $this->generateLoginFormHTML(self::$user->getMessage(),self::$user->getUsername());
+                    }        
+                }
+                else
+                {
+                    $response = $this->generateLoginFormHTML("","");
+                }
+            }
+           
             return $response;
 	}
+
 	/**
 	* Generate HTML code on the output buffer for the logout button
 	* @param $message, String output message
@@ -73,7 +95,8 @@ class LoginView {
 				<input type="submit" name="' . self::$logout . '" value="logout"/>
 			</form>
 		';
-	}	
+	}
+	
 	/**
 	* Generate HTML code on the output buffer for the logout button
 	* @param $message, String output message
@@ -99,7 +122,8 @@ class LoginView {
 				</fieldset>
 			</form>
 		';
-	}	
+	}
+	
 	//CREATE GET-FUNCTIONS TO FETCH REQUEST VARIABLES
 	private function getRequestUserName() {
 		//RETURN REQUEST VARIABLE: USERNAME
@@ -146,26 +170,16 @@ class LoginView {
             }
             return false; 
         }
-        /*
-         * Check if the checkbox is checked
-         */
-        private function isKeepCheckboxPressed()
-        {
-            if($this->makeStringSecure(filter_input(INPUT_POST, self::$keep)) == "on")
-            {
-                return true;
-            }
-            else
-            {
-                return false;
-            }
-        }
         /**
          * Get if the user is logged in or not
          * @return Boolean isLoggedIn
          */
         public function isLoggedIn() 
         {
+            if($this->isSessionLoggedIn())
+            {
+                return true;
+            }
             return self::$user->isLoggedIn();
         }
         /*
@@ -173,16 +187,13 @@ class LoginView {
          */
         private function isSessionLoggedIn()
         {
-            if(isset($_SESSION[self::$sessionName]) && isset($_SESSION[self::$sessionPassword]))
+            $username = $this->session->getSession(self::$sessionName);
+            $password = $this->session->getSession(self::$sessionPassword);
+            $sessionId = $this->session->generateUniqueID($username, $password);
+            $correctId = self::$controller->getCorrectSessionId();
+            if($correctId === $sessionId)
             {
-                $username = $this->makeStringSecure($_SESSION[self::$sessionName]);
-                $password = $this->makeStringSecure($_SESSION[self::$sessionPassword]);
-                
-                self::$user = self::$controller->login($username, $password);
-                if(self::$user->isLoggedIn())
-                {
-                    return true;
-                }
+                return true;
             }
             return false;   
         }
@@ -191,71 +202,9 @@ class LoginView {
          */
         private function isSessionExist()
         {
-            if(isset($_SESSION[self::$sessionName]) && isset($_SESSION[self::$sessionPassword]))
-            {
-                return true;
-            }
-            return false;
-        }
-        /*
-         * Create a secure string
-         */
-        private function makeStringSecure($str)
-        {
-            $newStr = htmlentities($str);
-            
-            return $newStr;
-        }
-        /*
-         * Log in the user if the information were correct else return to the login form with an error
-         */
-        private function login()
-        {
-            $response = "";
-            self::$user = self::$controller->login($this->getUsername(), $this->getPassword());
-            if(self::$user->isLoggedIn())
-            {
-                $response = $this->generateLogoutButtonHTML("Welcome");
-                // Add session info
-                $_SESSION[self::$sessionName] = self::$user->getUsername();
-                $_SESSION[self::$sessionPassword] = self::$user->getPassword();
-                if($this->isKeepCheckboxPressed())
-                {
-                    self::$cookies->setCookie(self::$cookieName, self::$user->getUsername());
-                    self::$cookies->setCookie(self::$cookiePassword, self::$user->getPassword());
-                }
-            }
-            else
-            {
-                $response = $this->generateLoginFormHTML(self::$user->getMessage(),self::$user->getUsername());
-            }
-            return $response;
-        }
-        /*
-         * Return to the login form and remove session and cookies if there is any
-         */
-        private function logout()
-        {
-            $response = "";
-            if($this->isSessionExist())
-            {
-                $response = $this->generateLoginFormHTML("Bye bye!","");
-            }
-            else 
-            {
-                $response = $this->generateLoginFormHTML("",""); 
-            }
-            session_destroy();
-            self::$cookies->clearCookie(self::$cookieName);
-            self::$cookies->clearCookie(self::$cookiePassword);
-            return $response;
-        }
-        /*
-         * Check if there exist cookies
-         */
-        private function isCookiesLoggedIn()
-        {
-            if(self::$cookies->getCookie(self::$cookieName) != null && self::$cookies->getCookie(self::$cookiePassword) != null)
+            $username = $this->session->getSession(self::$sessionName);
+            $password = $this->session->getSession(self::$sessionPassword);
+            if($username !== "" && $password !== "")
             {
                 return true;
             }

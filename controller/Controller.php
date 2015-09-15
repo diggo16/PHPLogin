@@ -15,10 +15,13 @@ class Controller
 {
     private $loginRules;
     private $loginView;
+    private $session;
+    private $correctUser;
     
     private $username;
     private $password;
     private static $user;
+    
     /**
      * Initialize other classes
      */
@@ -26,9 +29,19 @@ class Controller
     {
         require_once 'model/LoginRules.php';
         require_once 'model/User.php';
+        require_once 'view/Session.php';
         
         $this->loginRules = new LoginRules();
         self::$user = new User();
+        $this->session = new Session();
+        
+        $username = "Admin";
+        $password = "Password";
+        $this->correctUser = new User();
+        $id = $this->session->generateUniqueID($username, $password);
+        $this->correctUser->setNewInfo($username, $password, false, "");
+        $this->correctUser->setSessionId($id);
+        
     }
    private function validateLogin()
    {
@@ -49,11 +62,18 @@ class Controller
        $message = $this->validateLogin();
        $this->loginView = new LoginView(); 
        $loggedIn = false;
+       $sessionId = "";
        if($message == "")
        {
            $loggedIn = true;
+           $sessionId = $this->session->generateUniqueID($this->username, $this->password);
        }
-       self::$user->setNewInfo($username, $password, $loggedIn, $message);
+       self::$user->setNewInfo($this->username, $this->password, $loggedIn, $message);
+       self::$user->setSessionId($sessionId);
        return self::$user;
+   }
+   public function getCorrectSessionId()
+   {
+       return $this->correctUser->getSessionId();
    }
 }

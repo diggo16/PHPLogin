@@ -10,6 +10,7 @@ class User
     private static $password;
     private static $isLoggedIn;
     private static $message;
+    private static $sessionId;
     
     public function setNewInfo($username, $password, $isLoggedIn, $message) 
     {
@@ -33,5 +34,13 @@ class User
     public function getMessage()
     {
         return self::$message;
+    }
+    public function setSessionId($id)
+    {
+        self::$sessionId = $id;
+    }
+    public function getSessionId()
+    {
+        return self::$sessionId;
     }
 }
