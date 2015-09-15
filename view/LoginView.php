@@ -11,7 +11,6 @@ class LoginView {
         private static $sessionName = 'Session::SessionName';
         private static $sessionPassword = 'Session::SessionPassword';
         
-        private static $errorMsg;
         private static $controller;
         private static $user;
         private $session;
@@ -19,11 +18,9 @@ class LoginView {
 
         public function __construct() 
         {
-            require_once 'ErrorMessages.php';
             require_once 'controller/Controller.php';
             require_once 'Session.php';
             require_once 'Feedback.php';
-            self::$errorMsg = new ErrorMessages();
             self::$controller = new Controller();
             self::$user = new User();
             
