@@ -15,18 +15,20 @@ class LoginView {
         private static $user;
         private $session;
         private $feedback;
+        private $post;
 
         public function __construct() 
         {
             require_once 'controller/Controller.php';
             require_once 'Session.php';
             require_once 'Feedback.php';
+            require_once 'PostObjects.php';
             self::$controller = new Controller(self::$sessionName, self::$sessionPassword);
             self::$user = new User();
-            
-            
+              
             $this->session = new Session();
             $this->feedback = new Feedback();
+            $this->post = new PostObjects();
         }
 	/**
 	 * Create HTTP response
@@ -40,7 +42,7 @@ class LoginView {
             $response = "";
             $correctId = self::$controller->getCorrectSessionId();
             // If the logout button is pushed
-            if($this->isLogOutButtonPushed())
+            if($this->post->isButtonPushed(self::$logout))
             {
                 if($this->session->isSessionExist(self::$sessionName, self::$sessionPassword))
                 {
@@ -60,9 +62,9 @@ class LoginView {
             else
             {
                 // If the login button is pushed
-                if($this->isLoginButtonPushed())
+                if($this->post->isButtonPushed(self::$login))
                 {
-                    self::$user = self::$controller->authenticate($this->getUsername(), $this->getPassword());
+                    self::$user = self::$controller->authenticate($this->post->getString(self::$name), $this->post->getString(self::$password));
                     if(self::$user->isLoggedIn())
                     {
                         $response = $this->generateLogoutButtonHTML($this->feedback->getWelcomeMsg());
@@ -102,7 +104,7 @@ class LoginView {
 	*/
 	private function generateLoginFormHTML($message, $username) {
 		return '
-			<form method="post" action="?' . $this->getUsername() . '"> 
+			<form method="post"> 
 				<fieldset>
 					<legend>Login - enter Username and password</legend>
 					<p id="' . self::$messageId . '">' . $message . '</p>
@@ -126,48 +128,6 @@ class LoginView {
 	private function getRequestUserName() {
 		//RETURN REQUEST VARIABLE: USERNAME
 	}
-        /**
-         * Get the username
-         * @return String $username
-         */
-        private function getUsername()
-        {
-            $username = filter_input(INPUT_POST,self::$name,FILTER_SANITIZE_STRING);
-            return $username;
-        }
-        /**
-         * Get the password
-         * @return String $password
-         */
-        private function getPassword()
-        {
-            $password = filter_input(INPUT_POST,self::$password,FILTER_SANITIZE_STRING);
-            return $password;
-        }
-        /**
-         * Check if the login button is pushed
-         * @return boolean
-         */
-        public function isLoginButtonPushed() 
-        {
-            if(isset($_POST[self::$login]))
-            {
-                return true;
-            }
-            return false;
-        }
-        /**
-         * Check if the logout button is pushed
-         * @return boolean
-         */
-        public function isLogoutButtonPushed()
-        {
-           if(isset($_POST[self::$logout]))
-            {
-                return true;
-            }
-            return false; 
-        }
         /**
          * Get if the user is logged in or not
          * @return Boolean isLoggedIn
