@@ -39,6 +39,29 @@ class Session
     {
         unset($_SESSION[$name]);
     }
+    public function isSessionExist($sessionName, $sessionPassword)
+    {
+        $username = $this->getSession($sessionName);
+        $password = $this->getSession($sessionPassword);
+      
+        if($username !== "" && $password !== "")
+        {
+            return true;
+        }
+        return false;
+    }
+    public function isSessionLoggedIn($sessionName, $sessionPassword, $correctId)
+    {
+        $username = $this->getSession($sessionName);
+        $password = $this->getSession($sessionPassword);
+        $sessionId = $this->generateUniqueID($username, $password); 
+        
+        if($correctId === $sessionId)
+        {
+            return true;
+        }
+        return false;   
+    }
     private function makeStringSecure($string)
     {
         $newStr = htmlentities($_SESSION[$string]);  

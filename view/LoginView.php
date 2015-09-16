@@ -38,10 +38,11 @@ class LoginView {
 	public function response() {    
             
             $response = "";
+            $correctId = self::$controller->getCorrectSessionId();
             // If the logout button is pushed
             if($this->isLogOutButtonPushed())
             {
-                if($this->isSessionExist())
+                if($this->session->isSessionExist(self::$sessionName, self::$sessionPassword))
                 {
                     $response = $this->generateLoginFormHTML($this->feedback->getByeMsg(),"");
                 }
@@ -52,7 +53,7 @@ class LoginView {
                 self::$controller->logout(self::$sessionName, self::$sessionPassword);      
             }
             // Else if the session is valid
-            else if($this->isSessionLoggedIn())
+            else if($this->session->isSessionLoggedIn(self::$sessionName, self::$sessionPassword, $correctId))
             {
                 $response = $this->generateLogoutButtonHTML("");
             }
@@ -129,7 +130,7 @@ class LoginView {
          * Get the username
          * @return String $username
          */
-        public function getUsername()
+        private function getUsername()
         {
             $username = filter_input(INPUT_POST,self::$name,FILTER_SANITIZE_STRING);
             return $username;
@@ -138,7 +139,7 @@ class LoginView {
          * Get the password
          * @return String $password
          */
-        public function getPassword()
+        private function getPassword()
         {
             $password = filter_input(INPUT_POST,self::$password,FILTER_SANITIZE_STRING);
             return $password;
@@ -173,38 +174,11 @@ class LoginView {
          */
         public function isLoggedIn() 
         {
-            if($this->isSessionLoggedIn())
+            $correctId = self::$controller->getCorrectSessionId();
+            if($this->session->isSessionLoggedIn(self::$sessionName, self::$sessionPassword, $correctId))
             {
                 return true;
             }
             return self::$user->isLoggedIn();
-        }
-        /*
-         * Check if there is correct session info
-         */
-        private function isSessionLoggedIn()
-        {
-            $username = $this->session->getSession(self::$sessionName);
-            $password = $this->session->getSession(self::$sessionPassword);
-            $sessionId = $this->session->generateUniqueID($username, $password);
-            $correctId = self::$controller->getCorrectSessionId();
-            if($correctId === $sessionId)
-            {
-                return true;
-            }
-            return false;   
-        }
-        /*
-         * Check if there exist a session
-         */
-        private function isSessionExist()
-        {
-            $username = $this->session->getSession(self::$sessionName);
-            $password = $this->session->getSession(self::$sessionPassword);
-            if($username !== "" && $password !== "")
-            {
-                return true;
-            }
-            return false;
         }
 }
