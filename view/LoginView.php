@@ -21,7 +21,7 @@ class LoginView {
             require_once 'controller/Controller.php';
             require_once 'Session.php';
             require_once 'Feedback.php';
-            self::$controller = new Controller();
+            self::$controller = new Controller(self::$sessionName, self::$sessionPassword);
             self::$user = new User();
             
             
@@ -61,13 +61,10 @@ class LoginView {
                 // If the login button is pushed
                 if($this->isLoginButtonPushed())
                 {
-                    self::$user = self::$controller->login($this->getUsername(), $this->getPassword());
+                    self::$user = self::$controller->authenticate($this->getUsername(), $this->getPassword());
                     if(self::$user->isLoggedIn())
                     {
                         $response = $this->generateLogoutButtonHTML($this->feedback->getWelcomeMsg());
-                        // Add session info                       
-                        $this->session->setSession(self::$sessionName, self::$user->getUsername());
-                        $this->session->setSession(self::$sessionPassword, self::$user->getPassword());
                     }
                     else
                     {
@@ -104,7 +101,7 @@ class LoginView {
 	*/
 	private function generateLoginFormHTML($message, $username) {
 		return '
-			<form method="post" > 
+			<form method="post" action="?' . $this->getUsername() . '"> 
 				<fieldset>
 					<legend>Login - enter Username and password</legend>
 					<p id="' . self::$messageId . '">' . $message . '</p>

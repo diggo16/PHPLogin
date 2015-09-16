@@ -16,6 +16,8 @@ class Controller
     private $loginRules;
     private $loginView;
     private $session;
+    private $sessionName;
+    private $sessionPassword;
     private $correctUser;
     
     private $username;
@@ -23,24 +25,29 @@ class Controller
     private static $user;
     
     /**
-     * Initialize other classes
+     * Initialize other classes and save the sessionName and sessionPassword
      */
-    public function __construct() 
+    public function __construct($sessionName, $sessionPassword) 
     {
         require_once 'model/LoginRules.php';
         require_once 'model/User.php';
         require_once 'view/Session.php';
         
-        $this->loginRules = new LoginRules();
+        // Create a correct user
+        $username = "Admin";
+        $password = "Password";
+        $correctUser = new User();
+        $this->correctUser = $correctUser;
+        
+        $this->loginRules = new LoginRules($correctUser);
         self::$user = new User();
         $this->session = new Session();
         
-        $username = "Admin";
-        $password = "Password";
-        $this->correctUser = new User();
         $id = $this->session->generateUniqueID($username, $password);
         $this->correctUser->setNewInfo($username, $password, false, "");
         $this->correctUser->setSessionId($id);
+        $this->sessionName = $sessionName;
+        $this->sessionPassword = $sessionPassword;
         
     }
    private function validateLogin()
@@ -76,7 +83,7 @@ class Controller
    {
        return $this->correctUser->getSessionId();
    }
-   public function Authenticate($username, $password)
+   public function authenticate($username, $password)
    {
        $this->username = $username;
        $this->password = $password;
@@ -88,9 +95,13 @@ class Controller
        {
            $loggedIn = true;
            $sessionId = $this->session->generateUniqueID($this->username, $this->password);
+           self::$user->setSessionId($sessionId);
+           // Add session info                       
+           $this->session->setSession($this->sessionName, self::$user->getUsername());
+           $this->session->setSession($this->sessionPassword, self::$user->getPassword());
        }
        self::$user->setNewInfo($this->username, $this->password, $loggedIn, $message);
-       self::$user->setSessionId($sessionId);
+       
        return self::$user;
    }
    /**
