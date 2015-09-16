@@ -19,6 +19,7 @@ class Controller
     private $sessionName;
     private $sessionPassword;
     private $correctUser;
+    private $feedback;
     
     private $username;
     private $password;
@@ -32,6 +33,7 @@ class Controller
         require_once 'model/LoginRules.php';
         require_once 'model/User.php';
         require_once 'view/Session.php';
+        require_once 'view/Feedback.php';
         
         // Create a correct user
         $username = "Admin";
@@ -48,36 +50,25 @@ class Controller
         $this->correctUser->setSessionId($id);
         $this->sessionName = $sessionName;
         $this->sessionPassword = $sessionPassword;
+        $this->feedback = new Feedback();
         
     }
    private function validateLogin()
    {
-       $message = $this->loginRules->validateLogin($this->username, $this->password);
-       return $message;
-   }
-   /**
-    * Check if the username and password is correct,
-    * else give a proper error message
-    * @param String $username
-    * @param String $password
-    * @return User $user
-    */
-   public function login($username, $password) 
-    {
-       $this->username = $username;
-       $this->password = $password;
-       $message = $this->validateLogin();
-       $this->loginView = new LoginView(); 
-       $loggedIn = false;
-       $sessionId = "";
-       if($message == "")
+       $message = "";
+       if($this->loginRules->isUsernameMissing($this->username))
        {
-           $loggedIn = true;
-           $sessionId = $this->session->generateUniqueID($this->username, $this->password);
+           $message =  $this->feedback->getUsernameMissingMsg();
        }
-       self::$user->setNewInfo($this->username, $this->password, $loggedIn, $message);
-       self::$user->setSessionId($sessionId);
-       return self::$user;
+       else if($this->loginRules->isPasswordMissing($this->password))
+       {
+           $message = $this->feedback->getPasswordMissingMsg();
+       }
+       else if(!$this->loginRules->isUsernameAndPasswordMatch($this->username, $this->password))
+       {
+           $message = $this->feedback->getNoMatchMsg();
+       }
+       return $message;
    }
    public function getCorrectSessionId()
    {
