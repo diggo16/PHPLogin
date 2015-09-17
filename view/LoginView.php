@@ -16,6 +16,7 @@ class LoginView {
         private $session;
         private $feedback;
         private $post;
+        private $cookies;
 
         public function __construct() 
         {
@@ -23,12 +24,15 @@ class LoginView {
             require_once 'Session.php';
             require_once 'Feedback.php';
             require_once 'PostObjects.php';
+            require_once 'Cookies.php';
+            
             self::$controller = new Controller(self::$sessionName, self::$sessionPassword);
             self::$user = new User();
               
             $this->session = new Session();
             $this->feedback = new Feedback();
             $this->post = new PostObjects();
+            $this->cookies = new Cookies();
         }
 	/**
 	 * Create HTTP response
@@ -52,27 +56,25 @@ class LoginView {
                 {
                    $response = $this->generateLoginFormHTML("",""); 
                 }
-                self::$controller->logout(self::$sessionName, self::$sessionPassword);      
+                self::$controller->logout(self::$sessionName, self::$sessionPassword, self::$cookieName, self::$cookiePassword);      
+            }
+             // Else if there is valid cookies
+            else if(self::$controller->authenticateCookies($this->cookies->getCookie(self::$cookieName), $this->cookies->getCookie(self::$cookiePassword)))
+            {
+                $response = $this->generateLogoutButtonHTML("");
             }
             // Else if the session is valid
             else if($this->session->isSessionLoggedIn(self::$sessionName, self::$sessionPassword, $correctId))
             {
                 $response = $this->generateLogoutButtonHTML("");
             }
+           
             else
             {
                 // If the login button is pushed
                 if($this->post->isButtonPushed(self::$login))
                 {
-                    self::$user = self::$controller->authenticate($this->post->getString(self::$name), $this->post->getString(self::$password));
-                    if(self::$user->isLoggedIn())
-                    {
-                        $response = $this->generateLogoutButtonHTML($this->feedback->getWelcomeMsg());
-                    }
-                    else
-                    {
-                        $response = $this->generateLoginFormHTML(self::$user->getMessage(),self::$user->getUsername());
-                    }        
+                    $response = $this->login();       
                 }
                 else
                 {
@@ -123,11 +125,6 @@ class LoginView {
 			</form>
 		';
 	}
-	
-	//CREATE GET-FUNCTIONS TO FETCH REQUEST VARIABLES
-	private function getRequestUserName() {
-		//RETURN REQUEST VARIABLE: USERNAME
-	}
         /**
          * Get if the user is logged in or not
          * @return Boolean isLoggedIn
@@ -140,5 +137,37 @@ class LoginView {
                 return true;
             }
             return self::$user->isLoggedIn();
+        }
+        private function isCheckboxSet() 
+        {
+            if($this->post->isButtonPushed(self::$keep))
+            {
+                $this->cookies->setCookie(self::$cookieName, self::$user->getUsername());
+                $cookiePass = $this->cookies->generateCookiePassword(self::$user->getUsername(), self::$user->getPassword());
+                $this->cookies->setCookie(self::$cookiePassword, $cookiePass);
+            }
+        }
+        private function login()
+        {
+            $response = "";
+            if($this->post->isButtonPushed(self::$keep))
+            {
+                 self::$user = self::$controller->authenticateWithSavedCredentials($this->post->getString(self::$name), 
+                                                                                   $this->post->getString(self::$password), 
+                                                                                   self::$cookieName, self::$cookiePassword);     
+            }
+            else 
+            {
+                self::$user = self::$controller->authenticate($this->post->getString(self::$name), $this->post->getString(self::$password));
+            }
+            if(self::$user->isLoggedIn())
+            {
+                $response = $this->generateLogoutButtonHTML($this->feedback->getWelcomeMsg());
+            }
+            else
+            {
+                $response = $this->generateLoginFormHTML(self::$user->getMessage(),self::$user->getUsername());
+            }
+            return $response;
         }
 }

@@ -11,6 +11,7 @@ class User
     private static $isLoggedIn;
     private static $message;
     private static $sessionId;
+    private static $cookiePassword;
     
     public function setNewInfo($username, $password, $isLoggedIn, $message) 
     {
@@ -42,5 +43,13 @@ class User
     public function getSessionId()
     {
         return self::$sessionId;
+    }
+    public function setCookiePassword($password)
+    {
+        self::$cookiePassword = $password;
+    }
+    public function getCookiePassword()
+    {
+        return self::$cookiePassword;
     }
 }

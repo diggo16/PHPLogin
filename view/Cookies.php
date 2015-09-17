@@ -35,4 +35,9 @@ class Cookies
     {
         setcookie($cookieName,"",time()-1);
     }
+    public function generateCookiePassword($username, $password)
+    {
+        $id = $username . "::" . $password;
+        return sha1($id);  
+    }
 }

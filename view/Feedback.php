@@ -33,4 +33,8 @@ class Feedback
     {
         return "Wrong name or password";
     }
+    public function getWelcomeCookieMsg()
+    {
+        return "Welcome with cookies";
+    }
 }
