@@ -64,10 +64,18 @@ class LoginView {
                 $response = $this->generateLogoutButtonHTML("");
             }
             // Else if there is valid cookies
-            else if(self::$controller->authenticateCookies($this->cookies->getCookie(self::$cookieName), $this->cookies->getCookie(self::$cookiePassword)))
+            else if($this->isCookies())
             {
-                self::$user->login();
-                $response = $this->generateLogoutButtonHTML($this->feedback->getWelcomeCookieMsg());
+                if(self::$controller->authenticateCookies($this->cookies->getCookie(self::$cookieName), $this->cookies->getCookie(self::$cookiePassword)))
+                {
+                    self::$user->login();
+                    $response = $this->generateLogoutButtonHTML($this->feedback->getWelcomeCookieMsg());
+                }
+                else
+                {
+                    $response = $this->generateLoginFormHTML($this->feedback->getWrongInformationCookies(),"");
+                }
+                
             }
             else
             {
@@ -138,15 +146,6 @@ class LoginView {
             }
             return self::$user->isLoggedIn();
         }
-        private function isCheckboxSet() 
-        {
-            if($this->post->isButtonPushed(self::$keep))
-            {
-                $this->cookies->setCookie(self::$cookieName, self::$user->getUsername());
-                $cookiePass = $this->cookies->generateCookiePassword(self::$user->getUsername(), self::$user->getPassword());
-                $this->cookies->setCookie(self::$cookiePassword, $cookiePass);
-            }
-        }
         private function login()
         {
             $response = "";
@@ -169,5 +168,13 @@ class LoginView {
                 $response = $this->generateLoginFormHTML(self::$user->getMessage(),self::$user->getUsername());
             }
             return $response;
+        }
+        private function isCookies()
+        {
+            if($this->cookies->getCookie(self::$cookieName) !="" && $this->cookies->getCookie(self::$cookiePassword))
+            {
+                return true;
+            }
+            return false;
         }
 }

@@ -37,4 +37,8 @@ class Feedback
     {
         return "Welcome back with cookie";
     }
+    public function getWrongInformationCookies()
+    {
+        return "Wrong information in cookies";
+    }
 }
