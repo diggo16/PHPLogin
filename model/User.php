@@ -52,4 +52,8 @@ class User
     {
         return self::$cookiePassword;
     }
+    public function login()
+    {
+        self::$isLoggedIn = true;
+    }
 }

@@ -35,6 +35,6 @@ class Feedback
     }
     public function getWelcomeCookieMsg()
     {
-        return "Welcome with cookies";
+        return "Welcome back with cookie";
     }
 }

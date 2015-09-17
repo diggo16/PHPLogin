@@ -58,17 +58,17 @@ class LoginView {
                 }
                 self::$controller->logout(self::$sessionName, self::$sessionPassword, self::$cookieName, self::$cookiePassword);      
             }
-             // Else if there is valid cookies
-            else if(self::$controller->authenticateCookies($this->cookies->getCookie(self::$cookieName), $this->cookies->getCookie(self::$cookiePassword)))
-            {
-                $response = $this->generateLogoutButtonHTML("");
-            }
             // Else if the session is valid
             else if($this->session->isSessionLoggedIn(self::$sessionName, self::$sessionPassword, $correctId))
             {
                 $response = $this->generateLogoutButtonHTML("");
             }
-           
+            // Else if there is valid cookies
+            else if(self::$controller->authenticateCookies($this->cookies->getCookie(self::$cookieName), $this->cookies->getCookie(self::$cookiePassword)))
+            {
+                self::$user->login();
+                $response = $this->generateLogoutButtonHTML($this->feedback->getWelcomeCookieMsg());
+            }
             else
             {
                 // If the login button is pushed
