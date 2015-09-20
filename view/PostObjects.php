@@ -1,6 +1,6 @@
 <?php
 /**
- * Description of PostObjects
+ * Handles POST objects
  *
  * @author Daniel
  */
