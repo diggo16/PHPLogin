@@ -22,11 +22,11 @@ class LoginView {
          */
         public function __construct() 
         {
-            require_once 'controller/Controller.php';
-            require_once 'Session.php';
-            require_once 'Feedback.php';
-            require_once 'PostObjects.php';
-            require_once 'Cookies.php';
+            require_once('controller/Controller.php');
+            require_once ('Session.php');
+            require_once ('Feedback.php');
+            require_once ('PostObjects.php');
+            require_once ('Cookies.php');
             
             self::$controller = new Controller(self::$sessionName, self::$sessionPassword);
             self::$user = new User();
@@ -50,6 +50,7 @@ class LoginView {
             // If the logout button is pushed
             if($this->post->isButtonPushed(self::$logout))
             {
+                // If it exists session info
                 if($this->session->isSessionExist(self::$sessionName, self::$sessionPassword))
                 {
                     $response = $this->generateLoginFormHTML($this->feedback->getByeMsg(),"");
@@ -68,11 +69,13 @@ class LoginView {
             // Else if there is valid cookies
             else if($this->isCookies())
             {
+                // If the cookies is valid, login the person
                 if(self::$controller->authenticateCookies($this->cookies->getCookie(self::$cookieName), $this->cookies->getCookie(self::$cookiePassword)))
                 {
                     self::$user->login();
                     $response = $this->generateLogoutButtonHTML($this->feedback->getWelcomeCookieMsg());
                 }
+                // Else return to login form with wrong cookies error text
                 else
                 {
                     $response = $this->generateLoginFormHTML($this->feedback->getWrongInformationCookies(),"");
@@ -141,38 +144,55 @@ class LoginView {
          */
         public function isLoggedIn() 
         {
-            $correctId = self::$controller->getCorrectSessionId();
+            $correctId = self::$controller->getCorrectSessionId();  // Get the correct session ID
             if($this->session->isSessionLoggedIn(self::$sessionName, self::$sessionPassword, $correctId))
             {
                 return true;
             }
             return self::$user->isLoggedIn();
         }
+        
+        /**
+         * If the login button was pushed, check if the info was correct.
+         * Return HTML text for a logged in person if the info is correct 
+         * else return loginform with error message
+         * @return type HTMLText
+         */
         private function login()
         {
             $response = "";
+            // If the keep checkbox is checked
             if($this->post->isButtonPushed(self::$keep))
             {
-                 self::$user = self::$controller->authenticateWithSavedCredentials($this->post->getString(self::$name), 
+                // Log in the user if the info is correct and save it in cookies
+                self::$user = self::$controller->authenticateWithSavedCredentials($this->post->getString(self::$name), 
                                                                                    $this->post->getString(self::$password), 
                                                                                    self::$cookieName, self::$cookiePassword);     
             }
+            // Else login if the info is correct without saving cookies
             else 
             {
                 self::$user = self::$controller->authenticate($this->post->getString(self::$name), $this->post->getString(self::$password));
             }
+            // If the user is logged in, return logged in screen with welcome message
             if(self::$user->isLoggedIn())
             {
                 $response = $this->generateLogoutButtonHTML($this->feedback->getWelcomeMsg());
             }
+            // Else return login form
             else
             {
                 $response = $this->generateLoginFormHTML(self::$user->getMessage(),self::$user->getUsername());
             }
             return $response;
         }
+        /**
+         * Check if there is cookies
+         * @return boolean isCookies
+         */
         private function isCookies()
         {
+            // If the cookies is not empty
             if($this->cookies->getCookie(self::$cookieName) !="" && $this->cookies->getCookie(self::$cookiePassword))
             {
                 return true;
