@@ -17,7 +17,9 @@ class LoginView {
         private $feedback;
         private $post;
         private $cookies;
-
+        /**
+         * Initialize objects
+         */
         public function __construct() 
         {
             require_once 'controller/Controller.php';
