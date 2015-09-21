@@ -2,11 +2,7 @@
 
 
 class LayoutView {
-  /**
-   * Echo all the views
-   * @param LoginView $v
-   * @param DateTimeView $dtv
-   */
+  
   public function render(LoginView $v, DateTimeView $dtv) 
   {
       $response = $v->response();
@@ -30,12 +26,8 @@ class LayoutView {
       </html>
     ';
   }
-  /**
-   * 
-   * @param boolean $isLoggedIn
-   * @return string htmlString
-   */
-  private function renderIsLoggedIn(boolean $isLoggedIn) {
+  
+  private function renderIsLoggedIn($isLoggedIn) {
     if ($isLoggedIn) {
       return '<h2>Logged in</h2>';
     }

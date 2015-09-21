@@ -2,12 +2,11 @@
 
 class DateTimeView {
 
-        /**
+        /*
          * Create a string of the date and time
-         * @return String timeString
          */
 	public function show() {
-            date_default_timezone_set("Europe/Berlin"); // Set the timezone to GMT+1
+            date_default_timezone_set("Europe/Berlin");
             $day = date("l");       // Day in the week in letters
             $number = date("jS");   // The day in number with "st" after
             $month = date("F");     // Month in letters

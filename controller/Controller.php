@@ -25,11 +25,9 @@ class Controller
     private $password;
     private static $user;
     
-   /**
-    * Initialize other classes and save the sessionName and sessionPassword
-    * @param String $sessionName
-    * @param String $sessionPassword
-    */
+    /**
+     * Initialize other classes and save the sessionName and sessionPassword
+     */
     public function __construct($sessionName, $sessionPassword) 
     {
         require_once 'model/LoginRules.php';
@@ -43,25 +41,20 @@ class Controller
         $password = "Password";
         $correctUser = new User();
         $this->correctUser = $correctUser;
-        $id = $this->session->generateUniqueID($username, $password);
-        $this->correctUser->setNewInfo($username, $password, false, "");
-        $this->correctUser->setSessionId($id);
         
         $this->loginRules = new LoginRules($correctUser);
         self::$user = new User();
         $this->session = new Session();
         
-        
+        $id = $this->session->generateUniqueID($username, $password);
+        $this->correctUser->setNewInfo($username, $password, false, "");
+        $this->correctUser->setSessionId($id);
         $this->sessionName = $sessionName;
         $this->sessionPassword = $sessionPassword;
         $this->feedback = new Feedback();
         $this->cookies = new Cookies();
         
     }
-    /**
-     * Check if the info is correct, else return an error message
-     * @return String message
-     */
    private function validateLogin()
    {
        $message = "";
@@ -79,38 +72,30 @@ class Controller
        }
        return $message;
    }
-   /**
-    * Return the session id for the correct user
-    * @return String id
-    */
    public function getCorrectSessionId()
    {
        return $this->correctUser->getSessionId();
    }
-   /**
-    * Creates a user and log it in if the info is correct. Return user
-    * @param String $username
-    * @param String $password
-    * @return User $user
-    */
    public function authenticate($username, $password)
    {
-        $this->username = $username;
-        $this->password = $password;
-        $message = $this->validateLogin();
-        $this->loginView = new LoginView(); 
-        $loggedIn = false;
-        $sessionId = "";
-        // If the user is logged in
-        if($message == "")
-        {
-            $loggedIn = true;
-            $sessionId = $this->session->generateUniqueID($this->username, $this->password);
-            self::$user->setSessionId($sessionId);
-            // Add session info                       
-            $this->session->setSession($this->sessionName, self::$user->getUsername());
-            $this->session->setSession($this->sessionPassword, self::$user->getPassword());
-        }
+       $this->username = $username;
+       $this->password = $password;
+       $message = $this->validateLogin();
+       $this->loginView = new LoginView(); 
+       $loggedIn = false;
+       $sessionId = "";
+       if($message == "")
+       {
+           $loggedIn = true;
+           $sessionId = $this->session->generateUniqueID($this->username, $this->password);
+           self::$user->setSessionId($sessionId);
+           // Add session info                       
+           $this->session->setSession($this->sessionName, self::$user->getUsername());
+           $this->session->setSession($this->sessionPassword, self::$user->getPassword());
+       }
+       self::$user->setNewInfo($this->username, $this->password, $loggedIn, $message);
+       
+       return self::$user;
    }
    /**
     * Log out the user
@@ -126,17 +111,9 @@ class Controller
         $this->cookies->clearCookie($cookieName);
         $this->cookies->clearCookie($cookiePassword);
    }
-   /**
-    * Check if the user has correct info. If that is the case, save cookies
-    * @param String $username
-    * @param String $password
-    * @param String $cookieName
-    * @param String $cookiePassword
-    * @return User $user
-    */
    public function authenticateWithSavedCredentials($username, $password, $cookieName, $cookiePassword)
    {
-       $this->authenticate($username, $password);
+       $this->login($username, $password);
        if(self::$user->isLoggedIn())
        {
             $cookiePass = $this->cookies->generateCookiePassword($username, $password);
@@ -146,12 +123,6 @@ class Controller
        }
        return self::$user;     
    }
-   /**
-    * Check if the user is logged in on cookies
-    * @param String $cookieName
-    * @param String $cookiePassword
-    * @return boolean loggedInOnCookies
-    */
    public function authenticateCookies($cookieName, $cookiePassword)
    {
         $correctCookiePassword = $this->cookies->generateCookiePassword($this->correctUser->getUsername(), $this->correctUser->getPassword());
@@ -160,5 +131,26 @@ class Controller
             return true;
         }
         return false;
+   }
+   private function login($username, $password)
+   {
+       $this->username = $username;
+       $this->password = $password;
+       $message = $this->validateLogin();
+       $this->loginView = new LoginView(); 
+       $loggedIn = false;
+       $sessionId = "";
+       if($message == "")
+       {
+           $loggedIn = true;
+           $sessionId = $this->session->generateUniqueID($this->username, $this->password);
+           self::$user->setSessionId($sessionId);
+           // Add session info                       
+           $this->session->setSession($this->sessionName, self::$user->getUsername());
+           $this->session->setSession($this->sessionPassword, self::$user->getPassword());
+       }
+       self::$user->setNewInfo($this->username, $this->password, $loggedIn, $message);
+       
+       return self::$user;
    }
 }
