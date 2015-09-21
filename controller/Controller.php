@@ -1,11 +1,4 @@
 <?php
-
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
-
 /**
  * Description of Controller
  *
@@ -55,6 +48,11 @@ class Controller
         $this->cookies = new Cookies();
         
     }
+   /**
+    * Check if the username and password is correct. Return error message if
+    * it's not correct.
+    * @return string $message
+    */ 
    private function validateLogin()
    {
        $message = "";
@@ -72,10 +70,20 @@ class Controller
        }
        return $message;
    }
+   /**
+    * return the session id for the correct user
+    * @return string sessionId
+    */
    public function getCorrectSessionId()
    {
        return $this->correctUser->getSessionId();
    }
+   /**
+    * Create the new user and return it. Log in the user if the info is correct.
+    * @param string $username
+    * @param string $password
+    * @return User $user
+    */
    public function authenticate($username, $password)
    {
        $this->username = $username;
@@ -97,11 +105,13 @@ class Controller
        
        return self::$user;
    }
-   /**
-    * Log out the user
-    * @param String $sessionUsername
-    * @param String $sessionPassword
-    */
+  /**
+   * Log out the user and remove session and cookies
+   * @param type $sessionUsername
+   * @param type $sessionPassword
+   * @param type $cookieName
+   * @param type $cookiePassword
+   */
    public function logout($sessionUsername, $sessionPassword, $cookieName, $cookiePassword)
    {
         // Remove session
@@ -111,6 +121,15 @@ class Controller
         $this->cookies->clearCookie($cookieName);
         $this->cookies->clearCookie($cookiePassword);
    }
+   /**
+    * same as method "authenticate"(row 87) but save the information in cookies if
+    * it is correct.
+    * @param string $username
+    * @param string $password
+    * @param string $cookieName
+    * @param string $cookiePassword
+    * @return User $user
+    */
    public function authenticateWithSavedCredentials($username, $password, $cookieName, $cookiePassword)
    {
        $this->login($username, $password);
@@ -123,6 +142,12 @@ class Controller
        }
        return self::$user;     
    }
+   /**
+    * If the cookies if correct return true else false
+    * @param string $cookieName
+    * @param string $cookiePassword
+    * @return boolean ifCookies
+    */
    public function authenticateCookies($cookieName, $cookiePassword)
    {
         $correctCookiePassword = $this->cookies->generateCookiePassword($this->correctUser->getUsername(), $this->correctUser->getPassword());
@@ -132,6 +157,12 @@ class Controller
         }
         return false;
    }
+   /**
+    * Same as method "authenticate"(row 87)
+    * @param string $username
+    * @param string $password
+    * @return User $user
+    */
    private function login($username, $password)
    {
        $this->username = $username;
