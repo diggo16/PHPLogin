@@ -23,11 +23,11 @@ class LoginView {
          */
         public function __construct() 
         {
-            require_once 'controller/Controller.php';
-            require_once 'Session.php';
-            require_once 'Feedback.php';
-            require_once 'PostObjects.php';
-            require_once 'Cookies.php';
+            require_once('controller/Controller.php');
+            require_once('Session.php');
+            require_once('Feedback.php');
+            require_once('PostObjects.php');
+            require_once('Cookies.php');
             
             self::$controller = new Controller(self::$sessionName, self::$sessionPassword);
             self::$user = new User();
