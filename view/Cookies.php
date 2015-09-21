@@ -40,4 +40,5 @@ class Cookies
         $id = $username . "::" . $password;
         return sha1($id);  
     }
+    // TODO create a random password
 }
