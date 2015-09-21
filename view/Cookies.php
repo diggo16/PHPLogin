@@ -43,6 +43,6 @@ class Cookies
     public function generateCookiePassword($username, $password)
     {
         $id = $username . "::" . $password;
-        return sha1($id);  
+        return sha1($id);    // sha1 = secure hash algorithm
     }
 }
