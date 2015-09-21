@@ -19,8 +19,10 @@ class Controller
     private static $user;
     
     /**
-     * Initialize other classes and save the sessionName and sessionPassword
-     */
+    * Initialize other classes and save the sessionName and sessionPassword
+    * @param string $sessionName
+    * @param string $sessionPassword
+    */
     public function __construct($sessionName, $sessionPassword) 
     {
         require_once 'model/LoginRules.php';
