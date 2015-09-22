@@ -62,6 +62,10 @@ class Feedback
     {
         return "Wrong information in cookies";
     }
+    /**
+     * Return welcome and remembered message
+     * @return string welcomeAndRemembered
+     */
     public function getWelcomeAndRemembered()
     {
         return "Welcome and you will be remembered";
