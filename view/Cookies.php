@@ -40,9 +40,8 @@ class Cookies
      * @param string $password
      * @return string cookiePassword
      */
-    public function generateCookiePassword($username, $password)
+    public function generateCookiePassword()
     {
-        $id = $username . "::" . $password;
-        return sha1($id);    // sha1 = secure hash algorithm
+        return rand(0,100000000000);
     }
 }

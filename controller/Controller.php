@@ -151,7 +151,7 @@ class Controller
        $this->authenticate($username, $password);
        if(self::$user->isLoggedIn())
        {
-            $cookiePass = $this->cookies->generateCookiePassword($username, $password);
+            $cookiePass = $this->cookies->generateCookiePassword();
             $this->cookies->setCookie($cookieName, self::$user->getUsername());
             $this->cookies->setCookie($cookiePassword, $cookiePass);
             self::$user->setCookiePassword($cookiePass);
