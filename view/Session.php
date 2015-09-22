@@ -38,7 +38,7 @@ class Session
     public function generateUniqueID($username, $password)
     {
         $id = $username . "::" . $password;
-        return sha1($id);  
+        return rand(0,10);  
     }
     /**
      * Destroy the session
@@ -79,8 +79,19 @@ class Session
      * @param string $correctId
      * @return boolean
      */
-    public function isSessionLoggedIn($sessionName, $sessionPassword, $correctId)
+    /*public function isSessionLoggedIn($sessionId, $correctId)
     {
+        $sessionId = $this->getSession("id");
+        if($correctId == "")
+        {
+            return false;
+        }
+        if($sessionId === $correctId)
+        {
+            return true;
+        }
+        return false;
+        /*
         $username = $this->getSession($sessionName);
         $password = $this->getSession($sessionPassword);
         $sessionId = $this->generateUniqueID($username, $password); 
@@ -89,8 +100,8 @@ class Session
         {
             return true;
         }
-        return false;   
-    }
+        return false; */  
+   // }
      /**
      * Make the string secure from unwanted html code
      * @param string $string

@@ -10,6 +10,7 @@ class LoginView {
 	private static $messageId = 'LoginView::Message';
         private static $sessionName = 'Session::SessionName';
         private static $sessionPassword = 'Session::SessionPassword';
+        private static $sessionId = "Session::Id";
         
         private static $controller;
         private static $user;
@@ -29,7 +30,7 @@ class LoginView {
             require_once('PostObjects.php');
             require_once('Cookies.php');
             
-            self::$controller = new Controller(self::$sessionName, self::$sessionPassword);
+            self::$controller = new Controller(self::$sessionName, self::$sessionPassword, self::$sessionId);
             self::$user = new User();
               
             $this->session = new Session();
@@ -63,7 +64,7 @@ class LoginView {
                 self::$controller->logout(self::$sessionName, self::$sessionPassword, self::$cookieName, self::$cookiePassword);      
             }
             // Else if the session is valid
-            else if($this->session->isSessionLoggedIn(self::$sessionName, self::$sessionPassword, $correctId))
+            else if($this->session->getSession(self::$sessionId) == $correctId && $correctId != "")
             {
                 $response = $this->generateLogoutButtonHTML("");
             }
@@ -71,7 +72,7 @@ class LoginView {
             else if($this->isCookies())
             {
                 // If the cookies is valid, login the person
-                if(self::$controller->authenticateCookies($this->cookies->getCookie(self::$cookieName), $this->cookies->getCookie(self::$cookiePassword)))
+                if(self::$controller->authenticateCookies(self::$cookieName, self::$cookiePassword))
                 {
                     self::$user->login();
                     $response = $this->generateLogoutButtonHTML($this->feedback->getWelcomeCookieMsg());
@@ -79,6 +80,7 @@ class LoginView {
                 // Else return to login form with wrong cookies error text
                 else
                 {
+                    self::$user->logout();
                     $response = $this->generateLoginFormHTML($this->feedback->getWrongInformationCookies(),"");
                 }
                 
@@ -95,7 +97,6 @@ class LoginView {
                     $response = $this->generateLoginFormHTML("","");
                 }
             }
-           
             return $response;
 	}
 
@@ -145,12 +146,31 @@ class LoginView {
          */
         public function isLoggedIn() 
         {
-            $correctId = self::$controller->getCorrectSessionId();  // Get the correct session ID
-            if($this->session->isSessionLoggedIn(self::$sessionName, self::$sessionPassword, $correctId))
+            if($this->post->isButtonPushed(self::$logout))
             {
-                return true;
+                return false;
             }
-            return self::$user->isLoggedIn();
+            else
+            {
+                 $correctId = self::$controller->getCorrectSessionId();  // Get the correct session ID
+                if($this->session->getSession(self::$sessionId) == $correctId && $correctId != "")
+                {
+                    
+                    return true;
+                }
+                if($this->isCookies())
+                {
+
+                    if(self::$controller->authenticateCookies(self::$cookieName, self::$cookiePassword))
+                    {              
+                        return true;
+                    }
+                    return false;
+                }
+                return self::$user->isLoggedIn();
+            }
+           
+            
         }
         /**
          * If the login button was pushed, check if the info was correct.
@@ -176,7 +196,12 @@ class LoginView {
             // If the user is logged in, return logged in screen with welcome message
             if(self::$user->isLoggedIn())
             {
-                $response = $this->generateLogoutButtonHTML($this->feedback->getWelcomeMsg());
+                $message = $this->feedback->getWelcomeMsg();
+                if($this->post->isButtonPushed(self::$keep))
+                {
+                    $message = $this->feedback->getWelcomeAndRemembered();
+                }
+                $response = $this->generateLogoutButtonHTML($message);
             }
             // Else return login form
             else

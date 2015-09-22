@@ -62,4 +62,8 @@ class Feedback
     {
         return "Wrong information in cookies";
     }
+    public function getWelcomeAndRemembered()
+    {
+        return "Welcome and you will be remembered";
+    }
 }

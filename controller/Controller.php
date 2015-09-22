@@ -17,19 +17,24 @@ class Controller
     private $username;
     private $password;
     private static $user;
+    private $userFile;
+    private $sessionId;
     
     /**
     * Initialize other classes and save the sessionName and sessionPassword
     * @param string $sessionName
     * @param string $sessionPassword
     */
-    public function __construct($sessionName, $sessionPassword) 
+    public function __construct($sessionName, $sessionPassword, $sessionId) 
     {
         require_once 'model/LoginRules.php';
         require_once 'model/User.php';
         require_once 'view/Session.php';
         require_once 'view/Feedback.php';
         require_once 'view/Cookies.php';
+        require_once 'model/UserFile.php';
+        
+        $this->sessionId = $sessionId;
         
         // Create a correct user
         $username = "Admin";
@@ -37,7 +42,8 @@ class Controller
         $correctUser = new User();
         $this->correctUser = $correctUser;
         
-        $this->loginRules = new LoginRules($correctUser);
+        $this->updateUser();
+         
         self::$user = new User();
         $this->session = new Session();
         
@@ -57,6 +63,7 @@ class Controller
     */ 
    private function validateLogin()
    {
+       $this->updateUser();
        $message = "";
        if($this->loginRules->isUsernameMissing($this->username))
        {
@@ -78,6 +85,7 @@ class Controller
     */
    public function getCorrectSessionId()
    {
+       $this->updateUser();
        return $this->correctUser->getSessionId();
    }
    /**
@@ -98,13 +106,15 @@ class Controller
        {
            $loggedIn = true;
            $sessionId = $this->session->generateUniqueID($this->username, $this->password);
+           $this->userFile->setUserFile($sessionId, "");
+           $this->session->setSession($this->sessionId, $sessionId);
            self::$user->setSessionId($sessionId);
            // Add session info                       
            $this->session->setSession($this->sessionName, self::$user->getUsername());
            $this->session->setSession($this->sessionPassword, self::$user->getPassword());
+           
        }
        self::$user->setNewInfo($this->username, $this->password, $loggedIn, $message);
-       
        return self::$user;
    }
   /**
@@ -119,9 +129,13 @@ class Controller
         // Remove session
         $this->session->removeSession($sessionUsername);
         $this->session->removeSession($sessionPassword);
+        $this->session->removeSession($this->sessionId);
         $this->session->destroySession();
         $this->cookies->clearCookie($cookieName);
         $this->cookies->clearCookie($cookiePassword);
+        
+        $this->updateUser();
+        $this->userFile->setUserFile("", "");
    }
    /**
     * Authenticate the user and save the information in cookies if
@@ -141,6 +155,7 @@ class Controller
             $this->cookies->setCookie($cookieName, self::$user->getUsername());
             $this->cookies->setCookie($cookiePassword, $cookiePass);
             self::$user->setCookiePassword($cookiePass);
+            $this->userFile->setUserFile(self::$user->getSessionId(), $cookiePass);
        }
        return self::$user;     
    }
@@ -152,11 +167,17 @@ class Controller
     */
    public function authenticateCookies($cookieName, $cookiePassword)
    {
-        $correctCookiePassword = $this->cookies->generateCookiePassword($this->correctUser->getUsername(), $this->correctUser->getPassword());
-        if($cookieName === $this->correctUser->getUsername() && $cookiePassword === $correctCookiePassword)
+        if($this->cookies->getCookie($cookieName) === $this->correctUser->getUsername() && 
+        $this->cookies->getCookie($cookiePassword) === $this->correctUser->getCookiePassword())
         {
             return true;
         }
         return false;
+   }
+    private function updateUser() 
+    {
+       $this->userFile = new UserFile();
+       $this->correctUser = $this->userFile->getUser();
+       $this->loginRules = new LoginRules($this->correctUser);
    }
 }

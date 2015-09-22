@@ -98,4 +98,8 @@ class User
     {
         self::$isLoggedIn = true;
     }
+    public function logout()
+    {
+        self::$isLoggedIn = false;
+    }
 }
