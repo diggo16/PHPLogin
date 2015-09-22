@@ -37,7 +37,7 @@ class Session
      */
     public function generateUniqueID()
     {
-        return rand(0,10000000000000000000000);  
+        return rand(0,10000000000000000000000); // random number between 0 and 10000000000000000000000  
     }
     /**
      * Destroy the session
@@ -71,36 +71,6 @@ class Session
         }
         return false;
     }
-    /**
-     * Check if the session is logged in
-     * @param string $sessionName
-     * @param string $sessionPassword
-     * @param string $correctId
-     * @return boolean
-     */
-    /*public function isSessionLoggedIn($sessionId, $correctId)
-    {
-        $sessionId = $this->getSession("id");
-        if($correctId == "")
-        {
-            return false;
-        }
-        if($sessionId === $correctId)
-        {
-            return true;
-        }
-        return false;
-        /*
-        $username = $this->getSession($sessionName);
-        $password = $this->getSession($sessionPassword);
-        $sessionId = $this->generateUniqueID($username, $password); 
-        
-        if($correctId === $sessionId)
-        {
-            return true;
-        }
-        return false; */  
-   // }
      /**
      * Make the string secure from unwanted html code
      * @param string $string
