@@ -35,10 +35,9 @@ class Session
      * @param string $password
      * @return string
      */
-    public function generateUniqueID($username, $password)
+    public function generateUniqueID()
     {
-        $id = $username . "::" . $password;
-        return rand(0,10);  
+        return rand(0,10000000000000000000000);  
     }
     /**
      * Destroy the session

@@ -47,7 +47,7 @@ class Controller
         self::$user = new User();
         $this->session = new Session();
         
-        $id = $this->session->generateUniqueID($username, $password);
+        $id = $this->session->generateUniqueID();
         $this->correctUser->setNewInfo($username, $password, false, "");
         $this->correctUser->setSessionId($id);
         $this->sessionName = $sessionName;
@@ -105,7 +105,7 @@ class Controller
        if($message == "")
        {
            $loggedIn = true;
-           $sessionId = $this->session->generateUniqueID($this->username, $this->password);
+           $sessionId = $this->session->generateUniqueID();
            $this->userFile->setUserFile($sessionId, "");
            $this->session->setSession($this->sessionId, $sessionId);
            self::$user->setSessionId($sessionId);
