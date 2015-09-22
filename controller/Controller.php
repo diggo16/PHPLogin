@@ -167,6 +167,9 @@ class Controller
         }
         return false;
    }
+   /**
+    * collect information from the user file
+    */
     private function updateUser() 
     {
        $this->userFile = new UserFile();
