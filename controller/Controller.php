@@ -36,19 +36,12 @@ class Controller
         
         $this->sessionId = $sessionId;
         
-        // Create a correct user
-        $username = "Admin";
-        $password = "Password";
-        $correctUser = new User();
-        $this->correctUser = $correctUser;
-        
         $this->updateUser();
          
         self::$user = new User();
         $this->session = new Session();
         
         $id = $this->session->generateUniqueID();
-        $this->correctUser->setNewInfo($username, $password, false, "");
         $this->correctUser->setSessionId($id);
         $this->sessionName = $sessionName;
         $this->sessionPassword = $sessionPassword;
