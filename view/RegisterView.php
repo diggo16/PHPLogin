@@ -7,6 +7,7 @@
 class RegisterView 
 {
     private $post;
+    
     private static $register = "register";
     private static  $message = "RegisterView::Message";
     private static  $username = "RegisterView::UserName";
@@ -14,10 +15,13 @@ class RegisterView
     private static  $repeatPassword = "RegisterView::PasswordRepeat";
     private static $registration = "DoRegistration";
     private static $textLength = 20;
+    private static $controller;
     public function __construct() 
     {
         require_once ('PostObjects.php');
+        require_once ('controller/RegisterController.php');
         $this->post = new PostObjects();
+        self::$controller = new RegisterController();
     }
     public function generateRegisterForm() 
     {
@@ -58,7 +62,11 @@ class RegisterView
     }
     private function checkData()
     {
-        return "test";
+        $message = self::$controller->registerUser($this->post->getString(self::$username),
+                                                   $this->post->getString(self::$password), 
+                                                   $this->post->getString(self::$repeatPassword));
+        
+        return $message;
     }
     public function generateRegisterLink() 
     {

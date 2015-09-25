@@ -52,6 +52,11 @@ class LayoutView {
         if($rv->isRegisterTextClicked())
         {
             $response = $rv->generateRegisterForm();
+            if($response == "")
+            {
+                $response = $response = $v->response();
+                $this->isLoggedIn = $v->isLoggedIn();
+            }
         }
         else
         {
