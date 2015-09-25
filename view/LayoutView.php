@@ -8,7 +8,7 @@ class LayoutView {
      * @param LoginView $v
      * @param DateTimeView $dtv
      */
-    public function render(LoginView $v, DateTimeView $dtv) 
+    public function render(LoginView $v, DateTimeView $dtv, RegisterView $rv) 
     {
         $response = $v->response();
         $isLoggedIn = $v->isLoggedIn();
