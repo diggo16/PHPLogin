@@ -21,11 +21,28 @@ class RegisterView
     }
     public function generateRegisterForm() 
     {
+        $response = "";
+        if(isset($_POST[self::$registration]))
+        {
+            $message = $this->checkData();
+            if($message != "")
+            {
+                $response = $this->getRegisterFormResponse($message);
+            }
+        }
+        else
+        {
+            $response = $this->getRegisterFormResponse("");
+        }
+        return $response;
+    }
+    private function getRegisterFormResponse($message)
+    {
         return "<h2>Register new user</h2>
 			<form action='?register' method='post' enctype='multipart/form-data'>
 				<fieldset>
 				<legend>Register a new user - Write username and password</legend>
-					<p id='" . self::$message . "'></p>
+					<p id='" . self::$message . "'>" . $message . "</p>
 					<label for='" . self::$username ."' >Username :</label>
 					<input type='text' size='" .self::$textLength . "' name='" . self::$username . "' id='RegisterView::UserName' value='' />
 					<br/>
@@ -38,6 +55,10 @@ class RegisterView
 					<input id='submit' type='submit' name='" .self::$registration . "'  value='Register' />
 					<br/>
 				</fieldset>";
+    }
+    private function checkData()
+    {
+        return "test";
     }
     public function generateRegisterLink() 
     {
