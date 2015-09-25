@@ -13,10 +13,11 @@ class RegisterView
     private static  $password = "RegisterView::Password";
     private static  $repeatPassword = "RegisterView::PasswordRepeat";
     private static $registration = "DoRegistration";
+    private static $textLength = 20;
     public function __construct() 
     {
         require_once ('PostObjects.php');
-        $post = new PostObjects();
+        $this->post = new PostObjects();
     }
     public function generateRegisterForm() 
     {
@@ -26,13 +27,13 @@ class RegisterView
 				<legend>Register a new user - Write username and password</legend>
 					<p id='" . self::$message . "'></p>
 					<label for='" . self::$username ."' >Username :</label>
-					<input type='text' size='20' name='" . self::$username . "' id='RegisterView::UserName' value='' />
+					<input type='text' size='" .self::$textLength . "' name='" . self::$username . "' id='RegisterView::UserName' value='' />
 					<br/>
 					<label for='" .self::$password . "' >Password  :</label>
-					<input type='password' size='20' name='" .self::$password . "' id='RegisterView::Password' value='' />
+					<input type='password' size='" .self::$textLength . "' name='" .self::$password . "' id='RegisterView::Password' value='' />
 					<br/>
 					<label for='" .self::$repeatPassword . "' >Repeat password  :</label>
-					<input type='password' size='20' name='" .self::$repeatPassword . "' id='RegisterView::PasswordRepeat' value='' />
+					<input type='password' size='" .self::$textLength . "' name='" .self::$repeatPassword . "' id='RegisterView::PasswordRepeat' value='' />
 					<br/>
 					<input id='submit' type='submit' name='" .self::$registration . "'  value='Register' />
 					<br/>
