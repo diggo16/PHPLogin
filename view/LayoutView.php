@@ -3,6 +3,7 @@
 
 class LayoutView {
   
+    private $isLoggedIn = false;
     /**
      * Echo all the views
      * @param LoginView $v
@@ -10,9 +11,8 @@ class LayoutView {
      */
     public function render(LoginView $v, DateTimeView $dtv, RegisterView $rv) 
     {
-        $isLoggedIn = $v->isLoggedIn();
-        $registerResponse = $rv->generateTextLink($isLoggedIn);
         $response = $this->getCorrectResponse($v, $rv);
+        $registerResponse = $rv->generateTextLink($this->isLoggedIn);
         echo '<!DOCTYPE html>
         <html>
           <head>
@@ -21,7 +21,7 @@ class LayoutView {
           </head>
           <body>
             <h1>Assignment 2</h1>
-            ' . $registerResponse . $this->renderIsLoggedIn($isLoggedIn) . '
+            ' . $registerResponse . $this->renderIsLoggedIn() . '
 
             <div class="container">
                 ' . $response . '
@@ -38,8 +38,8 @@ class LayoutView {
      * @param boolean $isLoggedIn
      * @return string htmlString
      */
-    private function renderIsLoggedIn($isLoggedIn) {
-      if ($isLoggedIn) {
+    private function renderIsLoggedIn() {
+      if ($this->isLoggedIn) {
         return '<h2>Logged in</h2>';
       }
       else {
@@ -56,6 +56,7 @@ class LayoutView {
         else
         {
             $response = $response = $v->response();
+            $this->isLoggedIn = $v->isLoggedIn();
         }
         return $response;
     }
