@@ -9,6 +9,10 @@ class RegisterView
     private $post;
     private static $register = "register";
     private static  $message = "RegisterView::Message";
+    private static  $username = "RegisterView::UserName";
+    private static  $password = "RegisterView::Password";
+    private static  $repeatPassword = "RegisterView::PasswordRepeat";
+    private static $registration = "DoRegistration";
     public function __construct() 
     {
         require_once ('PostObjects.php');
@@ -20,17 +24,17 @@ class RegisterView
 			<form action='?register' method='post' enctype='multipart/form-data'>
 				<fieldset>
 				<legend>Register a new user - Write username and password</legend>
-					<p id='RegisterView::Message'></p>
-					<label for='RegisterView::UserName' >Username :</label>
-					<input type='text' size='20' name='RegisterView::UserName' id='RegisterView::UserName' value='' />
+					<p id='" . self::$message . "'></p>
+					<label for='" . self::$username ."' >Username :</label>
+					<input type='text' size='20' name='" . self::$username . "' id='RegisterView::UserName' value='' />
 					<br/>
-					<label for='RegisterView::Password' >Password  :</label>
-					<input type='password' size='20' name='RegisterView::Password' id='RegisterView::Password' value='' />
+					<label for='" .self::$password . "' >Password  :</label>
+					<input type='password' size='20' name='" .self::$password . "' id='RegisterView::Password' value='' />
 					<br/>
-					<label for='RegisterView::PasswordRepeat' >Repeat password  :</label>
-					<input type='password' size='20' name='RegisterView::PasswordRepeat' id='RegisterView::PasswordRepeat' value='' />
+					<label for='" .self::$repeatPassword . "' >Repeat password  :</label>
+					<input type='password' size='20' name='" .self::$repeatPassword . "' id='RegisterView::PasswordRepeat' value='' />
 					<br/>
-					<input id='submit' type='submit' name='DoRegistration'  value='Register' />
+					<input id='submit' type='submit' name='" .self::$registration . "'  value='Register' />
 					<br/>
 				</fieldset>";
     }
