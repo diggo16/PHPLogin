@@ -10,13 +10,9 @@ class LayoutView {
      */
     public function render(LoginView $v, DateTimeView $dtv, RegisterView $rv) 
     {
-        $response = $v->response();
         $isLoggedIn = $v->isLoggedIn();
-        $registerResponse = "";
-        if(!$isLoggedIn)
-        {
-            $registerResponse = $rv->generateRegisterLink();
-        }
+        $registerResponse = $rv->generateTextLink($isLoggedIn);
+        $response = $this->getCorrectResponse($v, $rv);
         echo '<!DOCTYPE html>
         <html>
           <head>
@@ -49,5 +45,18 @@ class LayoutView {
       else {
         return '<h2>Not logged in</h2>';
       }
+    }
+    private function getCorrectResponse(LoginView $v, RegisterView $rv)
+    {
+        $response = "";
+        if($rv->isRegisterTextClicked())
+        {
+            $response = $rv->generateRegisterForm();
+        }
+        else
+        {
+            $response = $response = $v->response();
+        }
+        return $response;
     }
 }
