@@ -12,6 +12,11 @@ class LayoutView {
     {
         $response = $v->response();
         $isLoggedIn = $v->isLoggedIn();
+        $registerResponse = "";
+        if(!$isLoggedIn)
+        {
+            $registerResponse = $rv->generateRegisterLink();
+        }
         echo '<!DOCTYPE html>
         <html>
           <head>
@@ -20,7 +25,7 @@ class LayoutView {
           </head>
           <body>
             <h1>Assignment 2</h1>
-            ' . $this->renderIsLoggedIn($isLoggedIn) . '
+            ' . $registerResponse . $this->renderIsLoggedIn($isLoggedIn) . '
 
             <div class="container">
                 ' . $response . '
