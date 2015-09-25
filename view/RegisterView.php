@@ -7,6 +7,7 @@
 class RegisterView 
 {
     private $post;
+    private $exceptionMsg;
     
     private static $register = "register";
     private static  $message = "RegisterView::Message";
@@ -20,8 +21,10 @@ class RegisterView
     {
         require_once ('PostObjects.php');
         require_once ('controller/RegisterController.php');
+        require_once ('ExceptionMessages.php');
         $this->post = new PostObjects();
         self::$controller = new RegisterController();
+        $this->exceptionMsg = new ExceptionMessages();
     }
     public function generateRegisterForm() 
     {
@@ -62,9 +65,22 @@ class RegisterView
     }
     private function checkData()
     {
-        $message = self::$controller->registerUser($this->post->getString(self::$username),
+        $message = "";
+        try
+        {
+            $message = self::$controller->registerUser($this->post->getString(self::$username),
                                                    $this->post->getString(self::$password), 
                                                    $this->post->getString(self::$repeatPassword));
+        } 
+        catch (Exception $ex) 
+        {
+            $errorMessage = $ex->getMessage();
+            if(strcmp($errorMessage, $this->exceptionMsg->getUsernameTooShort()) === 0)
+            {
+                echo "here";
+            }
+               
+        }
         
         return $message;
     }
