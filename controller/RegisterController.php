@@ -15,7 +15,7 @@ class RegisterController
         require_once ('view/ExceptionMessages.php');
         require_once ('model/RegisterRules.php');
         
-        self::$usernameArray = [];
+        self::$usernameArray = array();
         $correctUser = new User();
         $correctUser->setNewInfo("Admin", "Password", false, "");
         self::$usernameArray[] = $correctUser;
@@ -24,7 +24,7 @@ class RegisterController
     }
     public function registerUser($username, $password, $repeatPassword) 
     {
-        $errors = [];
+        $errors = array();
         if($this->registerRules->checkUsernameFormat($username) == false)
         {
             array_push($errors, $this->exceptionMsg->getUsernameTooShort());
@@ -33,11 +33,15 @@ class RegisterController
         {
             array_push($errors, $this->exceptionMsg->getPasswordTooShort());
         }
+        if($this->registerRules->checkUsernameAlreadyUsed($username) == true)
+        {
+            array_push($errors, $this->exceptionMsg->getUsernameExists());
+        }
         return $errors;
     }
     private function checkUsername($username)
     {
-        $message = [];
+        $message = array();
         if(strlen($username) < 3)
         {
             array_push($message, $this->exceptionMsg->getUsernameTooShort());
@@ -54,7 +58,7 @@ class RegisterController
     }
     private function checkPassword($password)
     {
-        $message = [];
+        $message = array();
         if(strlen($password) < 6)
         {
             array_push($message, $this->exceptionMsg->getUsernameTooShort());
