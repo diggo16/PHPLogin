@@ -20,27 +20,33 @@ class RegisterController
     }
     public function registerUser($username, $password, $repeatPassword) 
     {
-        $message = $this->checkUsername($username);
-        $message .=$this->checkPassword($password);
-        $message .= $this->checkRepeatPassword($password, $repeatPassword);
-        return $message;
+        $userErrors = $this->checkUsername($username);
+        //$passwordErrors[] =$this->checkPassword($password);
+        //$repPassErrrors[] = $this->checkRepeatPassword($password, $repeatPassword);
+        $errors = [];
+        $errors = $this->addArr($errors, $userErrors);
+        var_dump($errors);
+        return $errors;
     }
     private function checkUsername($username)
     {
-        $message = "";
+        $message = [];
         if(strlen($username) < 3)
         {
-            throw new Exception($this->exceptionMsg->getUsernameTooShort());
+            array_push($message, $this->exceptionMsg->getUsernameTooShort());
         }
         if(preg_match('/[\'^£$%&*()}{@#~?><>,|=_+¬-]/', $username))
         {
-            throw new Exception($this->exceptionMsg->getUsernameIllegal());
+            array_push($message, $this->exceptionMsg->getUsernameIllegal());
+            //throw new Exception($this->exceptionMsg->getUsernameIllegal());
         }
         foreach (self::$usernameArray as $correctUser) 
         {
             if(strcmp($correctUser->getUsername(), $username) === 0)
             {
-                throw new Exception($this->exceptionMsg->getUsernameExists());
+                array_push($message, $this->exceptionMsg->getUsernameExists());
+                break;
+                //throw new Exception($this->exceptionMsg->getUsernameExists());
             }
         }
         return $message;
@@ -56,5 +62,13 @@ class RegisterController
         $message = "";
         $message = $repeatPassword;
         return $message;
+    }
+    private function addArr($array, $toBeAdded)
+    {
+        foreach ($toBeAdded as $value) 
+        {
+            $array[] = $value;
+        }
+        return $array;
     }
 }
