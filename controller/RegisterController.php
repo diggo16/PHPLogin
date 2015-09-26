@@ -7,25 +7,32 @@
 class RegisterController 
 {
     private static $usernameArray;
+    private $registerRules;
     private $exceptionMsg;
     public function __construct() 
     {
         require_once ("model/User.php");
         require_once ('view/ExceptionMessages.php');
+        require_once ('model/RegisterRules.php');
+        
         self::$usernameArray = [];
         $correctUser = new User();
         $correctUser->setNewInfo("Admin", "Password", false, "");
         self::$usernameArray[] = $correctUser;
         $this->exceptionMsg = new ExceptionMessages();
+        $this->registerRules = new RegisterRules();
     }
     public function registerUser($username, $password, $repeatPassword) 
     {
-        $userErrors = $this->checkUsername($username);
-        //$passwordErrors[] =$this->checkPassword($password);
-        //$repPassErrrors[] = $this->checkRepeatPassword($password, $repeatPassword);
         $errors = [];
-        $errors = $this->addArr($errors, $userErrors);
-        var_dump($errors);
+        if($this->registerRules->checkUsernameFormat($username) == false)
+        {
+            array_push($errors, $this->exceptionMsg->getUsernameTooShort());
+        }
+        if($this->registerRules->checkPasswordFormat($password) == false)
+        {
+            array_push($errors, $this->exceptionMsg->getPasswordTooShort());
+        }
         return $errors;
     }
     private function checkUsername($username)
@@ -35,26 +42,23 @@ class RegisterController
         {
             array_push($message, $this->exceptionMsg->getUsernameTooShort());
         }
-        if(preg_match('/[\'^£$%&*()}{@#~?><>,|=_+¬-]/', $username))
-        {
-            array_push($message, $this->exceptionMsg->getUsernameIllegal());
-            //throw new Exception($this->exceptionMsg->getUsernameIllegal());
-        }
         foreach (self::$usernameArray as $correctUser) 
         {
             if(strcmp($correctUser->getUsername(), $username) === 0)
             {
                 array_push($message, $this->exceptionMsg->getUsernameExists());
                 break;
-                //throw new Exception($this->exceptionMsg->getUsernameExists());
             }
         }
         return $message;
     }
     private function checkPassword($password)
     {
-        $message = "";
-        $message = $password;
+        $message = [];
+        if(strlen($password) < 6)
+        {
+            array_push($message, $this->exceptionMsg->getUsernameTooShort());
+        }
         return $message;
     }
     private function checkRepeatPassword($password, $repeatPassword)

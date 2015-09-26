@@ -25,4 +25,8 @@ class ExceptionMessages
     {
         return "UsernameExists";
     }
+    public function getPasswordTooShort()    
+    {
+        return "PasswordShort";
+    }
 }

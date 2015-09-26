@@ -110,10 +110,10 @@ class RegisterView
         {
             $message .= "Username too short";
         }
-        if(in_array($this->exceptionMsg->getUsernameExists(), $errorArr))
+        if(in_array($this->exceptionMsg->getPasswordTooShort(), $errorArr))
         {
-            $this->ifAddBreak($message);
-            $message .= "Username already exists";
+            $message = $this->ifAddBreak($message);
+            $message .= "Password is too short";
         }
         return $message;
     }
