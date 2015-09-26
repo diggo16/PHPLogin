@@ -8,6 +8,7 @@ class RegisterView
 {
     private $post;
     private $exceptionMsg;
+    private $feedback;
     
     private static $register = "register";
     private static  $message = "RegisterView::Message";
@@ -65,24 +66,10 @@ class RegisterView
     }
     private function checkData()
     {
-        $message = "";
-        try
-        {
-            $message = self::$controller->registerUser($this->post->getString(self::$username),
+        $errors = self::$controller->registerUser($this->post->getString(self::$username),
                                                    $this->post->getString(self::$password), 
                                                    $this->post->getString(self::$repeatPassword));
-        } 
-        catch (Exception $ex) 
-        {
-            $errorMessage = $ex->getMessage();
-            if(strcmp($errorMessage, $this->exceptionMsg->getUsernameTooShort()) === 0)
-            {
-                echo "here";
-            }
-               
-        }
-        
-        return $message;
+        return $this->getErrorMessages($errors);
     }
     public function generateRegisterLink() 
     {
@@ -114,5 +101,28 @@ class RegisterView
             $response = $this->generateBackToLoginLink();
         }
         return $response;
+    }
+    // TODO add messages to feedback
+    private function getErrorMessages($errorArr)
+    {
+        $message = "";
+        if(in_array($this->exceptionMsg->getUsernameTooShort(), $errorArr))
+        {
+            $message .= "Username too short";
+        }
+        if(in_array($this->exceptionMsg->getUsernameExists(), $errorArr))
+        {
+            $this->ifAddBreak($message);
+            $message .= "Username already exists";
+        }
+        return $message;
+    }
+    private function ifAddBreak($message)
+    {
+        if($message != "")
+        {
+            $message .= "<br />";
+        }
+        return $message;
     }
 }
