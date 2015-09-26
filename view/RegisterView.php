@@ -23,9 +23,11 @@ class RegisterView
         require_once ('PostObjects.php');
         require_once ('controller/RegisterController.php');
         require_once ('ExceptionMessages.php');
+        require_once ('Feedback.php');
         $this->post = new PostObjects();
         self::$controller = new RegisterController();
         $this->exceptionMsg = new ExceptionMessages();
+        $this->feedback = new Feedback();
     }
     public function generateRegisterForm() 
     {
@@ -108,17 +110,17 @@ class RegisterView
         $message = "";
         if(in_array($this->exceptionMsg->getUsernameTooShort(), $errorArr))
         {
-            $message .= "Username too short";
+            $message .= $this->feedback->getUsernameTooShortMsg();
         }
         if(in_array($this->exceptionMsg->getPasswordTooShort(), $errorArr))
         {
             $message = $this->ifAddBreak($message);
-            $message .= "Password is too short";
+            $message .= $this->feedback->getPasswordTooShortMsg();
         }
         if(in_array($this->exceptionMsg->getUsernameExists(), $errorArr))    
         {
             $message = $this->ifAddBreak($message);
-            $message .= "Username already exists";
+            $message .= $this->feedback->getUsernameAlreayExists();
         }
         return $message;
     }
