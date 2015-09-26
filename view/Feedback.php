@@ -70,4 +70,16 @@ class Feedback
     {
         return "Welcome and you will be remembered";
     }
+    public function getUsernameTooShortMsg()
+    {
+        return "Username has too few characters, at least 3 characters.";
+    }
+    public function getPasswordTooShortMsg()
+    {
+        return "Password has too few characters, at least 6 characters.";
+    }
+    public function getUsernameAlreayExists() 
+    {
+        return "User exists, pick another username.";
+    }
 }
