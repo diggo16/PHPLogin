@@ -31,6 +31,6 @@ class ExceptionMessages
     }
     public function getPasswordsDontMatch()
     {
-        "PasswordsDontMatch";
+        return "PasswordsDontMatch";
     }
 }
