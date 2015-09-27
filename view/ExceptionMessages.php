@@ -29,4 +29,8 @@ class ExceptionMessages
     {
         return "PasswordShort";
     }
+    public function getPasswordsDontMatch()
+    {
+        "PasswordsDontMatch";
+    }
 }
