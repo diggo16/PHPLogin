@@ -37,16 +37,16 @@ class RegisterView
             $message = $this->checkData();
             if($message != "")
             {
-                $response = $this->getRegisterFormResponse($message);
+                $response = $this->getRegisterFormResponse($message, $this->post->getString(self::$username));
             }
         }
         else
         {
-            $response = $this->getRegisterFormResponse("");
+            $response = $this->getRegisterFormResponse("", "");
         }
         return $response;
     }
-    private function getRegisterFormResponse($message)
+    private function getRegisterFormResponse($message, $username)
     {
         return "<h2>Register new user</h2>
 			<form action='?register' method='post' enctype='multipart/form-data'>
@@ -54,7 +54,7 @@ class RegisterView
 				<legend>Register a new user - Write username and password</legend>
 					<p id='" . self::$message . "'>" . $message . "</p>
 					<label for='" . self::$username ."' >Username :</label>
-					<input type='text' size='" .self::$textLength . "' name='" . self::$username . "' id='RegisterView::UserName' value='' />
+					<input type='text' size='" .self::$textLength . "' name='" . self::$username . "' id='RegisterView::UserName' value='" . $username . "' />
 					<br/>
 					<label for='" .self::$password . "' >Password  :</label>
 					<input type='password' size='" .self::$textLength . "' name='" .self::$password . "' id='RegisterView::Password' value='' />
