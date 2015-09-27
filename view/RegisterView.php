@@ -15,7 +15,7 @@ class RegisterView
     private static  $username = "RegisterView::UserName";
     private static  $password = "RegisterView::Password";
     private static  $repeatPassword = "RegisterView::PasswordRepeat";
-    private static $registration = "DoRegistration";
+    private static $registration = "LoginView::Login";
     private static $textLength = 20;
     private static $controller;
     public function __construct() 
