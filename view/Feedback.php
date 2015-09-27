@@ -82,4 +82,8 @@ class Feedback
     {
         return "User exists, pick another username.";
     }
+    public function getPasswordsDontMatch()
+    {
+        return "Passwords do not match. User exists, pick another username.";
+    }
 }
