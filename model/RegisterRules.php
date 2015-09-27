@@ -40,4 +40,12 @@ class RegisterRules
         }
         return false;
     }
+    public function checkPasswordMatch($password, $repeatPassword)
+    {
+        if(strcmp($password, $repeatPassword) == 0)
+        {
+            return true;
+        }
+        return false;
+    }
 }
