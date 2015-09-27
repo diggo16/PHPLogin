@@ -122,6 +122,11 @@ class RegisterView
             $message = $this->ifAddBreak($message);
             $message .= $this->feedback->getUsernameAlreayExists();
         }
+        if(in_array($this->exceptionMsg->getPasswordsDontMatch(), $errorArr))
+        {
+            $message = $this->ifAddBreak($message);
+            $message .= $this->feedback->getPasswordsDontMatch();
+        }
         return $message;
     }
     private function ifAddBreak($message)
