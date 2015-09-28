@@ -92,6 +92,6 @@ class Feedback
     }
     public function getSucessfulRegistration()
     {
-        return "Registered new user";
+        return "Registered new user.";
     }
 }
