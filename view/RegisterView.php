@@ -15,7 +15,7 @@ class RegisterView
     private static  $username = "RegisterView::UserName";
     private static  $password = "RegisterView::Password";
     private static  $repeatPassword = "RegisterView::PasswordRepeat";
-    private static $registration = "LoginView::Login";
+    private static $registration = "RegisterView::Register";    // LoginView::Login
     private static $textLength = 20;
     private static $controller;
     public function __construct() 
@@ -68,7 +68,8 @@ class RegisterView
     }
     private function checkData()
     {
-        $errors = self::$controller->registerUser($this->post->getString(self::$username),
+        $this->showUsername = true;
+        $errors = self::$controller->registerUser($this->post->getStringWithoutFilter(self::$username),
                                                    $this->post->getString(self::$password), 
                                                    $this->post->getString(self::$repeatPassword));
         return $this->getErrorMessages($errors);
@@ -126,6 +127,11 @@ class RegisterView
         {
             $message = $this->ifAddBreak($message);
             $message .= $this->feedback->getPasswordsDontMatch();
+        }
+        if(in_array($this->exceptionMsg->getInvalidUsername(), $errorArr))
+        {
+            $message = $this->ifAddBreak($message);
+            $message .= $this->feedback->getUsernameIsInvalidMsg();
         }
         return $message;
     }

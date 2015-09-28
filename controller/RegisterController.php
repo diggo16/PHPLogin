@@ -41,6 +41,10 @@ class RegisterController
         {
             array_push($errors, $this->exceptionMsg->getPasswordsDontMatch());
         }
+        if($this->registerRules->isUsernameValid($username) == false && count($errors) == 0)
+        {
+            array_push($errors, $this->exceptionMsg->getInvalidUsername());
+        }
         return $errors;
     }
     private function checkUsername($username)
