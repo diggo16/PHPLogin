@@ -28,5 +28,9 @@ class PostObjects
     {
         return filter_input(INPUT_POST,$POSTName,FILTER_SANITIZE_STRING);
     }
+    public function getStringWithoutFilter($POSTName)
+    {
+        return $_POST[$POSTName];
+    }
 
 }
