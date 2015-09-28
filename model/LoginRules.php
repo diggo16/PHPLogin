@@ -51,10 +51,13 @@ class LoginRules
     */
    public function isUsernameAndPasswordMatch($username, $password)
    {
-       if($this->correctUser->getUsername() != $username || $this->correctUser->getPassword() != $password)
+       foreach ($this->correctUser as $user) 
        {
-           return false;
+            if($user->getUsername() == $username && $user->getPassword() == $password)
+            {
+                return true;
+            }
        }
-       return true;
+       return false;
    }
 }

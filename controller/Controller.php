@@ -42,7 +42,7 @@ class Controller
         $this->session = new Session();
         
         $id = $this->session->generateUniqueID();
-        $this->correctUser->setSessionId($id);
+        $this->correctUser[0]->setSessionId($id);
         $this->sessionName = $sessionName;
         $this->sessionPassword = $sessionPassword;
         $this->feedback = new Feedback();
@@ -79,7 +79,7 @@ class Controller
    public function getCorrectSessionId()
    {
        $this->updateUser();
-       return $this->correctUser->getSessionId();
+       return $this->correctUser[0]->getSessionId();
    }
    /**
     * Create the new user and return it. Log in the user if the info is correct.
@@ -160,8 +160,8 @@ class Controller
     */
    public function authenticateCookies($cookieName, $cookiePassword)
    {
-        if($this->cookies->getCookie($cookieName) === $this->correctUser->getUsername() && 
-        $this->cookies->getCookie($cookiePassword) === $this->correctUser->getCookiePassword())
+        if($this->cookies->getCookie($cookieName) === $this->correctUser[0]->getUsername() && 
+        $this->cookies->getCookie($cookiePassword) === $this->correctUser[0]->getCookiePassword())
         {
             return true;
         }

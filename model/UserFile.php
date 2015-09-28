@@ -15,19 +15,24 @@ class UserFile
     
     public function getUser() 
     {
-        $fileStr = file_get_contents(self::$filename);
-        $userInfo = explode(" ", $fileStr);
-        $username = $userInfo[0];
-        $password = $userInfo[1];
-        $sessionid = $userInfo[2];
-        $cookiePassword = $userInfo[3];
-        
-        $user = new User();
-        $user->setNewInfo($username, $password, false, "");
-        $user->setSessionId($sessionid);
-        $user->setCookiePassword($cookiePassword);
-        
-        return $user;    
+        $users = array();
+        $fileArr = file(self::$filename);
+        foreach($fileArr as $line)
+        {
+            $userInfo = explode(" ", $line);
+            $username = $userInfo[0];
+            $password = $userInfo[1];
+            $sessionid = $userInfo[2];
+            $cookiePassword = $userInfo[3];
+
+            $user = new User();
+            $user->setNewInfo($username, $password, false, "");
+            $user->setSessionId($sessionid);
+            $user->setCookiePassword($cookiePassword);
+            
+            array_push($users, $user);
+        }
+        return $users;    
     }
     public function setUserFile($sessionId, $cookiePassword)
     {
