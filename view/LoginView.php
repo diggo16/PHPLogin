@@ -99,6 +99,10 @@ class LoginView {
             }
             return $response;
 	}
+        public function responseWithParameters($message, $username)
+        {
+           return $this->generateLoginFormHTML($message, $username);
+        }
 
 	/**
 	* Generate HTML code on the output buffer for the logout button
