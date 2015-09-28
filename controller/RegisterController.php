@@ -9,11 +9,13 @@ class RegisterController
     private static $usernameArray;
     private $registerRules;
     private $exceptionMsg;
+    
     public function __construct() 
     {
         require_once ("model/User.php");
         require_once ('view/ExceptionMessages.php');
         require_once ('model/RegisterRules.php');
+        require_once('model/UserFile.php');
         
         self::$usernameArray = array();
         $correctUser = new User();
@@ -45,46 +47,15 @@ class RegisterController
         {
             array_push($errors, $this->exceptionMsg->getInvalidUsername());
         }
+        if(count($errors) == 0)
+        {
+            $this->saveUser($username, $password);
+        }
         return $errors;
     }
-    private function checkUsername($username)
+    public function saveUser($username, $password)
     {
-        $message = array();
-        if(strlen($username) < 3)
-        {
-            array_push($message, $this->exceptionMsg->getUsernameTooShort());
-        }
-        foreach (self::$usernameArray as $correctUser) 
-        {
-            if(strcmp($correctUser->getUsername(), $username) === 0)
-            {
-                array_push($message, $this->exceptionMsg->getUsernameExists());
-                break;
-            }
-        }
-        return $message;
-    }
-    private function checkPassword($password)
-    {
-        $message = array();
-        if(strlen($password) < 6)
-        {
-            array_push($message, $this->exceptionMsg->getUsernameTooShort());
-        }
-        return $message;
-    }
-    private function checkRepeatPassword($password, $repeatPassword)
-    {
-        $message = "";
-        $message = $repeatPassword;
-        return $message;
-    }
-    private function addArr($array, $toBeAdded)
-    {
-        foreach ($toBeAdded as $value) 
-        {
-            $array[] = $value;
-        }
-        return $array;
+        $userFile = new UserFile();
+        $userFile->addUser($username, $password, "", "");
     }
 }

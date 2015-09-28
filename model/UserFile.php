@@ -43,4 +43,17 @@ class UserFile
                       $separator . $cookiePassword;
         file_put_contents(self::$filename, $fileString);
     }
+    public function addUser($username, $password, $sessionId, $cookiePassword)
+    {
+        $separator = " ";
+        $oldString = file_get_contents(self::$filename);
+        $newline = "";
+        if($oldString != "")
+        {
+            $newline = "\n";
+        }
+        $fileString = $oldString . $newline .$username . $separator . $password . $separator . $sessionId .
+                      $separator . $cookiePassword;
+        file_put_contents(self::$filename, $fileString);
+    }
 }
