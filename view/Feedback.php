@@ -86,4 +86,8 @@ class Feedback
     {
         return "Passwords do not match. User exists, pick another username.";
     }
+    public function getUsernameIsInvalidMsg()
+    {
+        return "Username contains invalid characters.";
+    }
 }
