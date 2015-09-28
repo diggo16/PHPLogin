@@ -48,4 +48,12 @@ class RegisterRules
         }
         return false;
     }
+    public function isUsernameValid($username)
+    {
+        if (preg_match('/[\'^£$%&*()}{@#~?><>,|=_+¬-]/', $username))
+        {
+            return false;
+        }
+        return true;
+    }
 }
