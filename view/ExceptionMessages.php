@@ -33,4 +33,8 @@ class ExceptionMessages
     {
         return "PasswordsDontMatch";
     }
+    public function getInvalidUsername()
+    {
+        return "UsernameInvalid";
+    }
 }
