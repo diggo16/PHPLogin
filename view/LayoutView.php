@@ -54,8 +54,8 @@ class LayoutView {
             $response = $rv->generateRegisterForm();
             if($response == "")
             {
-                $response = $response = $v->response();
-                $this->isLoggedIn = $v->isLoggedIn();
+                $response = $v->responseWithParameters($rv->getSucessfulFeedback(), $rv->getUsername());
+                $this->isLoggedIn = false;
             }
         }
         else
