@@ -143,4 +143,12 @@ class RegisterView
         }
         return $message;
     }
+    public function getSucessfulFeedback()
+    {
+        return $this->feedback->getSucessfulRegistration();
+    }
+    public function getUsername()
+    {
+        return $this->post->getString(self::$username);
+    }
 }
