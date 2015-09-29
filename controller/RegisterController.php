@@ -1,6 +1,6 @@
 <?php
 /**
- * Description of RegisterController
+ * A controller that handles the registration
  *
  * @author daniel
  */
@@ -9,6 +9,9 @@ class RegisterController
     private static $usernameArray;
     private $registerRules;
     private $exceptionMsg;
+    /**
+     * Initialize objects
+     */
     public function __construct() 
     {
         require_once ("model/User.php");
@@ -22,69 +25,41 @@ class RegisterController
         $this->exceptionMsg = new ExceptionMessages();
         $this->registerRules = new RegisterRules();
     }
+    /**
+     * Check if the information is valid, else return error messages
+     * @param var $username
+     * @param var $password
+     * @param var $repeatPassword
+     * @return array $errors
+     */
     public function registerUser($username, $password, $repeatPassword) 
     {
         $errors = array();
+        // If the username is too short
         if($this->registerRules->checkUsernameFormat($username) == false)
         {
             array_push($errors, $this->exceptionMsg->getUsernameTooShort());
         }
+        // If the password is too short
         if($this->registerRules->checkPasswordFormat($password) == false)
         {
             array_push($errors, $this->exceptionMsg->getPasswordTooShort());
         }
+        // If the username is already used
         if($this->registerRules->checkUsernameAlreadyUsed($username) == true)
         {
             array_push($errors, $this->exceptionMsg->getUsernameExists());
         }
+        // If the password dont match the repeat password
         if($this->registerRules->checkPasswordMatch($password, $repeatPassword) == false)
         {
             array_push($errors, $this->exceptionMsg->getPasswordsDontMatch());
         }
+        // If the username has illegal characters
         if($this->registerRules->isUsernameValid($username) == false && count($errors) == 0)
         {
             array_push($errors, $this->exceptionMsg->getInvalidUsername());
         }
         return $errors;
-    }
-    private function checkUsername($username)
-    {
-        $message = array();
-        if(strlen($username) < 3)
-        {
-            array_push($message, $this->exceptionMsg->getUsernameTooShort());
-        }
-        foreach (self::$usernameArray as $correctUser) 
-        {
-            if(strcmp($correctUser->getUsername(), $username) === 0)
-            {
-                array_push($message, $this->exceptionMsg->getUsernameExists());
-                break;
-            }
-        }
-        return $message;
-    }
-    private function checkPassword($password)
-    {
-        $message = array();
-        if(strlen($password) < 6)
-        {
-            array_push($message, $this->exceptionMsg->getUsernameTooShort());
-        }
-        return $message;
-    }
-    private function checkRepeatPassword($password, $repeatPassword)
-    {
-        $message = "";
-        $message = $repeatPassword;
-        return $message;
-    }
-    private function addArr($array, $toBeAdded)
-    {
-        foreach ($toBeAdded as $value) 
-        {
-            $array[] = $value;
-        }
-        return $array;
     }
 }
