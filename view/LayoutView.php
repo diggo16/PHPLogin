@@ -34,7 +34,7 @@ class LayoutView {
     }
 
     /**
-     * 
+     * Check if the user is logged in
      * @param boolean $isLoggedIn
      * @return string htmlString
      */
@@ -46,18 +46,27 @@ class LayoutView {
         return '<h2>Not logged in</h2>';
       }
     }
+    /**
+     * Check what view that should be shown
+     * @param LoginView $v
+     * @param RegisterView $rv
+     * @return var $response
+     */
     private function getCorrectResponse(LoginView $v, RegisterView $rv)
     {
         $response = "";
+        //if register text is clicked, show the RegisterView
         if($rv->isRegisterTextClicked())
         {
             $response = $rv->generateRegisterForm();
+            //If the registration was correct, return to login form
             if($response == "")
             {
                 $response = $v->responseWithParameters($rv->getSucessfulFeedback(), $rv->getUsername());
                 $this->isLoggedIn = false;
             }
         }
+        //Else show the LoginView
         else
         {
             $response = $response = $v->response();
