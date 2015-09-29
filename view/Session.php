@@ -1,6 +1,6 @@
 <?php
 /**
- * Description of Session
+ * Handles the session
  *
  * @author Daniel
  */
