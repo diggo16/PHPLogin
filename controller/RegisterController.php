@@ -9,6 +9,7 @@ class RegisterController
     private static $usernameArray;
     private $registerRules;
     private $exceptionMsg;
+    private $userFile;
     /**
      * Initialize objects
      */
@@ -19,10 +20,9 @@ class RegisterController
         require_once ('model/RegisterRules.php');
         require_once('model/UserFile.php');
         
+        $this->userFile = new UserFile();
         self::$usernameArray = array();
-        $correctUser = new User();
-        $correctUser->setNewInfo("Admin", "Password", false, "");
-        self::$usernameArray[] = $correctUser;
+        self::$usernameArray[] = $this->userFile->getUser();;
         $this->exceptionMsg = new ExceptionMessages();
         $this->registerRules = new RegisterRules();
     }
@@ -74,7 +74,6 @@ class RegisterController
      */
     public function saveUser($username, $password)
     {
-        $userFile = new UserFile();
-        $userFile->addUser($username, $password, "", "");
+        $this->userFile->addUser($username, $password, "", "");
     }
 }
