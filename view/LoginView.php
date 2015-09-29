@@ -99,6 +99,12 @@ class LoginView {
             }
             return $response;
 	}
+        /**
+         * Return a login form with the parameters as message and username
+         * @param string $message
+         * @param string $username
+         * @return string htmlString
+         */
         public function responseWithParameters($message, $username)
         {
            return $this->generateLoginFormHTML($message, $username);
