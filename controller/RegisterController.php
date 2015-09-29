@@ -12,7 +12,6 @@ class RegisterController
     /**
      * Initialize objects
      */
-    
     public function __construct() 
     {
         require_once ("model/User.php");
@@ -68,6 +67,11 @@ class RegisterController
         }
         return $errors;
     }
+    /**
+     * Save the user to the UserFile
+     * @param var $username
+     * @param var $password
+     */
     public function saveUser($username, $password)
     {
         $userFile = new UserFile();
