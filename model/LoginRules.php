@@ -1,6 +1,6 @@
 <?php
 /**
- * Description of LoginRules
+ * Rules for logging in
  *
  * @author Daniel
  */
