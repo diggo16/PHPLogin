@@ -28,6 +28,12 @@ class PostObjects
     {
         return filter_input(INPUT_POST,$POSTName,FILTER_SANITIZE_STRING);
     }
+    /**
+     * Return the string from POST with the name $POSTName 
+     * without filtering the string first
+     * @param string $POSTName
+     * @return string postString
+     */
     public function getStringWithoutFilter($POSTName)
     {
         return $_POST[$POSTName];
