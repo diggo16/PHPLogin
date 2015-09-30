@@ -22,7 +22,7 @@ class RegisterController
         
         $this->userFile = new UserFile();
         self::$usernameArray = array();
-        self::$usernameArray[] = $this->userFile->getUser();;
+        self::$usernameArray[] = $this->userFile->getUsers();
         $this->exceptionMsg = new ExceptionMessages();
         $this->registerRules = new RegisterRules();
     }

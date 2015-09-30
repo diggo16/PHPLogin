@@ -7,6 +7,7 @@
 class UserFile 
 {
     private static $filename = "model/CorrectUser.txt"; // File path
+    private static $filePath = "model/data";
     /**
      * Import User.php
      */
@@ -18,45 +19,51 @@ class UserFile
      * Get an array of the existing users
      * @return array
      */
-    public function getUser() 
+    public function getUsers() 
     {
         $users = array();
-        $fileArr = file(self::$filename);   // Array of the lines in the file
-        // For each line in the file
-        foreach($fileArr as $line)
+        if ($handle = opendir(self::$filePath)) 
         {
-            $userInfo = explode(" ", $line);    // Put the words in an array
-            //Save the info in variables
-            $username = $userInfo[0];
-            $password = $userInfo[1];
-            $sessionid = $userInfo[2];
-            $cookiePassword = $userInfo[3];
+            while (false !== ($entry = readdir($handle))) 
+            {
 
-            //Creates a new User object
-            $user = new User();
-            $user->setNewInfo($username, $password, false, "");
-            $user->setSessionId($sessionid);
-            $user->setCookiePassword($cookiePassword);
-            
-            array_push($users, $user);      // Push the new user to the array
-        }
-        return $users;    
+                if ($entry != "." && $entry != "..") 
+                { 
+                    $file = file_get_contents(self::$filePath . "/" . $entry);
+                    $userInfo = explode(" ", $file);
+                    $username = $userInfo[0];                   
+                    $password = $userInfo[1];
+                    $sessionid = $userInfo[2];
+                    $cookiePassword = $userInfo[3];
+                    
+                    $user = new User();
+                    $user->setNewInfo($username, $password, false, "");
+                    $user->setSessionId($sessionid);
+                    $user->setCookiePassword($cookiePassword);                   
+                    $users[] = $user;
+                }
+            }
+        closedir($handle);
+        }  
+        return $users;
+
     }
     /**
      * Replace the file with a user
      * @param var $sessionId
      * @param var $cookiePassword
      */
-    public function setUserFile($sessionId, $cookiePassword)
+    public function setUserFileWithSession($sessionId, $newSession, $newCookie)
     {
-        // Stub values
-        $username = "Admin";
-        $password = "Password";
-        // Put all the information in a string that separates the info with space
-        $separator = " ";
-        $fileString = $username . $separator . $password . $separator . $sessionId .
-                      $separator . $cookiePassword;
-        file_put_contents(self::$filename, $fileString);    // Save the string to the file
+        $user = $this->getUserFromSession($sessionId);
+        assert($user != NULL);
+        $this->addUser($user->getUsername(), $user->getPassword(), $newSession, $newCookie);
+    }
+    public function setUserFileWithUsername($username, $newSession, $newCookie) 
+    {
+      $user = $this->getUserFromUsername($username);
+      assert($user != NULL);
+      $this->addUser($user->getUsername(), $user->getPassword(), $newSession, $newCookie);
     }
     /**
      * Add a user to the file
@@ -67,17 +74,41 @@ class UserFile
      */
     public function addUser($username, $password, $sessionId, $cookiePassword)
     {
+        $filename = self::$filePath . "/" . $username . ".txt";
         $separator = " ";
-        $oldString = file_get_contents(self::$filename);
-        $newline = "";
-        // If the file already have users
-        if($oldString != "")
+        if($sessionId == "")
         {
-            $newline = "\n";
+            $sessionId = 0;
         }
-        // Save the new content and old if there was any
-        $fileString = $oldString . $newline .$username . $separator . $password . $separator . $sessionId .
+        if($cookiePassword == "")
+        {
+            $cookiePassword = 0;
+        }
+        // Save the new content
+        $fileString = $username . $separator . $password . $separator . $sessionId .
                       $separator . $cookiePassword;
-        file_put_contents(self::$filename, $fileString);    // Put the new string in the file
+        file_put_contents($filename, $fileString);    // Put the new string in the file
+    }
+    public function getUserFromSession($sessionId)
+    {
+        $users = $this->getUsers();
+        foreach($users as $user)
+        {
+          if($user->getSessionId() == $sessionId)
+          {
+              return $user;
+          }
+        }
+    }
+    public function getUserFromUsername($username)
+    {
+        $users = $this->getUsers();
+        foreach($users as $user)
+        {
+          if($user->getUsername() == $username)
+          {
+              return $user;
+          }
+        }
     }
 }

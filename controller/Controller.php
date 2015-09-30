@@ -35,6 +35,7 @@ class Controller
         require_once 'model/UserFile.php';
         
         $this->sessionId = $sessionId;
+        $this->userFile = new UserFile();
         
         $this->updateUser();
          
@@ -99,7 +100,7 @@ class Controller
        {
            $loggedIn = true;
            $sessionId = $this->session->generateUniqueID();
-           $this->userFile->setUserFile($sessionId, "");
+           $this->userFile->addUser($username, $password, $sessionId, "");
            $this->session->setSession($this->sessionId, $sessionId);
            self::$user->setSessionId($sessionId);
            // Add session info                       
@@ -119,6 +120,7 @@ class Controller
    */
    public function logout($sessionUsername, $sessionPassword, $cookieName, $cookiePassword)
    {
+       $sessionId = $this->session->getSession($this->sessionId);
         // Remove session
         $this->session->removeSession($sessionUsername);
         $this->session->removeSession($sessionPassword);
@@ -128,7 +130,7 @@ class Controller
         $this->cookies->clearCookie($cookiePassword);
         
         $this->updateUser();
-        $this->userFile->setUserFile("", "");
+        $this->userFile->setUserFileWithSession($sessionId, "", "");
    }
    /**
     * Authenticate the user and save the information in cookies if
@@ -141,14 +143,14 @@ class Controller
     */
    public function authenticateWithSavedCredentials($username, $password, $cookieName, $cookiePassword)
    {
-       $this->authenticate($username, $password);
-       if(self::$user->isLoggedIn())
+       $user = $this->authenticate($username, $password);
+       if($user != null)
        {
-            $cookiePass = $this->cookies->generateCookiePassword();
-            $this->cookies->setCookie($cookieName, self::$user->getUsername());
-            $this->cookies->setCookie($cookiePassword, $cookiePass);
-            self::$user->setCookiePassword($cookiePass);
-            $this->userFile->setUserFile(self::$user->getSessionId(), $cookiePass);
+           $cookiePass = $this->cookies->generateCookiePassword();
+           $this->cookies->setCookie($cookieName, self::$user->getUsername());
+           $this->cookies->setCookie($cookiePassword, $cookiePass);
+           self::$user->setCookiePassword($cookiePass);
+           $this->userFile->addUser($username, $password, self::$user->getSessionId(), $cookiePass);
        }
        return self::$user;     
    }
@@ -160,20 +162,22 @@ class Controller
     */
    public function authenticateCookies($cookieName, $cookiePassword)
    {
-        if($this->cookies->getCookie($cookieName) === $this->correctUser[0]->getUsername() && 
-        $this->cookies->getCookie($cookiePassword) === $this->correctUser[0]->getCookiePassword())
-        {
-            return true;
-        }
-        return false;
+       foreach ($this->correctUser as $user) 
+       {
+           if($this->cookies->getCookie($cookiePassword) == $user->getCookiePassword())
+           {
+               return true;
+           }
+       }
+       return false;
+
    }
    /**
     * collect information from the user file
     */
     private function updateUser() 
     {
-       $this->userFile = new UserFile();
-       $this->correctUser = $this->userFile->getUser();
+       $this->correctUser = $this->userFile->getUsers();
        $this->loginRules = new LoginRules($this->correctUser);
    }
 }

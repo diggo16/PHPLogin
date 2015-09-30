@@ -6,12 +6,12 @@
  */
 class User 
 {
-    private static $username;
-    private static $password;
-    private static $isLoggedIn;
-    private static $message;
-    private static $sessionId;
-    private static $cookiePassword;
+    private $username;
+    private $password;
+    private $isLoggedIn;
+    private $message;
+    private $sessionId;
+    private $cookiePassword;
     
     /**
      * 
@@ -22,10 +22,10 @@ class User
      */
     public function setNewInfo($username, $password, $isLoggedIn, $message) 
     {
-        self::$username = $username;
-        self::$password = $password;
-        self::$isLoggedIn = $isLoggedIn;
-        self::$message = $message;
+        $this->username = $username;
+        $this->password = $password;
+        $this->isLoggedIn = $isLoggedIn;
+        $this->message = $message;
     }
     /**
      * Check if the user is logged in
@@ -33,7 +33,7 @@ class User
      */
     public function isLoggedIn() 
     {
-        return self::$isLoggedIn;
+        return $this->isLoggedIn;
     }
     /**
      * Return the username
@@ -41,7 +41,7 @@ class User
      */
     public function getUsername()
     {
-        return self::$username;
+        return $this->username;
     }
     /**
      * Return the password
@@ -49,7 +49,7 @@ class User
      */
     public function getPassword()
     {
-        return self::$password;
+        return $this->password;
     }
     /**
      * Return the message
@@ -57,7 +57,7 @@ class User
      */
     public function getMessage()
     {
-        return self::$message;
+        return $this->message;
     }
     /**
      * Set the session id
@@ -65,7 +65,7 @@ class User
      */
     public function setSessionId($id)
     {
-        self::$sessionId = $id;
+        $this->sessionId = $id;
     }
     /**
      * Return the session id
@@ -73,7 +73,7 @@ class User
      */
     public function getSessionId()
     {
-        return self::$sessionId;
+        return $this->sessionId;
     }
     /**
      * Set the cookie password
@@ -81,7 +81,7 @@ class User
      */
     public function setCookiePassword($password)
     {
-        self::$cookiePassword = $password;
+        $this->cookiePassword = $password;
     }
     /**
      * Return the cookie password
@@ -89,17 +89,17 @@ class User
      */
     public function getCookiePassword()
     {
-        return self::$cookiePassword;
+        return $this->cookiePassword;
     }
     /**
      * Log in the user
      */
     public function login()
     {
-        self::$isLoggedIn = true;
+        $this->isLoggedIn = true;
     }
     public function logout()
     {
-        self::$isLoggedIn = false;
+        $this->isLoggedIn = false;
     }
 }
