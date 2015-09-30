@@ -11,6 +11,7 @@ class LoginView {
         private static $sessionName = 'Session::SessionName';
         private static $sessionPassword = 'Session::SessionPassword';
         private static $sessionId = "Session::Id";
+        private static $sessionMessage = "Session:Message";
         
         private static $controller;
         private static $user;
@@ -53,7 +54,7 @@ class LoginView {
             if($this->post->isButtonPushed(self::$logout))
             {
                 // If it exists session info
-                if($this->session->isSessionExist(self::$sessionName, self::$sessionPassword))
+                if($this->session->getSession(self::$sessionId) != "")
                 {
                     $response = $this->generateLoginFormHTML($this->feedback->getByeMsg(),"");
                 }
@@ -115,7 +116,9 @@ class LoginView {
 	* @param $message, String output message
 	* @return  void, BUT writes to standard output!
 	*/
-	private function generateLogoutButtonHTML($message) {
+	private function generateLogoutButtonHTML($message) 
+        {
+            $this->session->setSession(self::$sessionMessage, $message);
 		return '
 			<form  method="post" >
 				<p id="' . self::$messageId . '">' . $message .'</p>
@@ -129,7 +132,9 @@ class LoginView {
 	* @param $message, String output message
 	* @return  void, BUT writes to standard output!
 	*/
-	private function generateLoginFormHTML($message, $username) {
+	private function generateLoginFormHTML($message, $username) 
+        {
+            $this->session->setSession(self::$sessionMessage, $message);
 		return '
 			<form method="post"> 
 				<fieldset>

@@ -55,14 +55,20 @@ class UserFile
     public function setUserFileWithSession($sessionId, $newSession, $newCookie) //TODO Refactor methods below
     {
         $user = $this->getUserFromSession($sessionId);
-        assert($user != NULL);
-        $this->addUser($user->getUsername(), $user->getPassword(), $newSession, $newCookie);
+        if($user != null)
+        {
+            $this->addUser($user->getUsername(), $user->getPassword(), $newSession, $newCookie);
+        }
+        
     }
     public function setUserFileWithUsername($username, $newSession, $newCookie) 
     {
       $user = $this->getUserFromUsername($username);
-      assert($user != NULL);
-      $this->addUser($user->getUsername(), $user->getPassword(), $newSession, $newCookie);
+      if($user != null)
+      {
+          $this->addUser($user->getUsername(), $user->getPassword(), $newSession, $newCookie);
+      }
+      
     }
     /**
      * Add a user to the file
