@@ -6,7 +6,6 @@
  */
 class UserFile 
 {
-    private static $filename = "model/CorrectUser.txt"; // File path
     private static $filePath = "model/data";
     /**
      * Import User.php
@@ -53,7 +52,7 @@ class UserFile
      * @param var $sessionId
      * @param var $cookiePassword
      */
-    public function setUserFileWithSession($sessionId, $newSession, $newCookie)
+    public function setUserFileWithSession($sessionId, $newSession, $newCookie) //TODO Refactor methods below
     {
         $user = $this->getUserFromSession($sessionId);
         assert($user != NULL);
