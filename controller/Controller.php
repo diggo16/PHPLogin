@@ -19,7 +19,6 @@ class Controller
     private static $user;
     private $userFile;
     private $sessionId;
-    private $random;
     
     /**
     * Initialize other classes and save the sessionName and sessionPassword
@@ -34,18 +33,16 @@ class Controller
         require_once 'view/Feedback.php';
         require_once 'view/Cookies.php';
         require_once 'model/UserFile.php';
-        require_once('model/RandomString.php');
         
         $this->sessionId = $sessionId;
         $this->userFile = new UserFile();
-        $this->random = new RandomString();
         
         $this->updateUser();
          
         self::$user = new User();
         $this->session = new Session();
         
-        $id = $this->random->generateUniqueID();
+        $id = $this->session->generateUniqueID();
         $this->correctUser[0]->setSessionId($id);
         $this->sessionName = $sessionName;
         $this->sessionPassword = $sessionPassword;
@@ -80,10 +77,17 @@ class Controller
     * return the session id for the correct user
     * @return string sessionId
     */
-   public function getCorrectSessionId()
+   public function isSessionCorrect($userSession)
    {
        $this->updateUser();
-       return $this->correctUser[0]->getSessionId();
+       foreach ($this->correctUser as $user) 
+       {
+           if($user->getSessionId() == $userSession)
+           {
+               return true;
+           }
+       }
+       return false;//$this->correctUser[0]->getSessionId();
    }
    /**
     * Create the new user and return it. Log in the user if the info is correct.
@@ -102,7 +106,7 @@ class Controller
        if($message == "")
        {
            $loggedIn = true;
-           $sessionId = $this->random->generateUniqueID();
+           $sessionId = $this->session->generateUniqueID();
            $this->userFile->addUser($username, $password, $sessionId, "");
            $this->session->setSession($this->sessionId, $sessionId);
            self::$user->setSessionId($sessionId);

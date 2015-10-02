@@ -80,7 +80,7 @@ class RegisterRules
      */
     public function isUsernameValid($username)
     {
-        if (preg_match('/[\'^£$%&*()}{@#~?><>,|=_+¬-]/', $username))
+        if (preg_match('/[\'^Â£$%&*()}{@#~?><>,|=_+Â¬-]/', $username))
         {
             return false;
         }

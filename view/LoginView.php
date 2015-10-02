@@ -49,7 +49,7 @@ class LoginView {
 	public function response() {    
             
             $response = "";
-            $correctId = self::$controller->getCorrectSessionId();
+            //$correctId = self::$controller->getCorrectSessionId();
             // If the logout button is pushed
             if($this->post->isButtonPushed(self::$logout))
             {
@@ -65,7 +65,7 @@ class LoginView {
                 self::$controller->logout(self::$sessionName, self::$sessionPassword, self::$cookieName, self::$cookiePassword);      
             }
             // Else if the session is valid
-            else if($this->session->getSession(self::$sessionId) == $correctId && $correctId != "")
+            else if($this->session->getSession(self::$sessionId) != "" && self::$controller->isSessionCorrect($this->session->getSession(self::$sessionId)) == true)
             {
                 $response = $this->generateLogoutButtonHTML("");
             }
@@ -167,8 +167,8 @@ class LoginView {
             }
             else
             {
-                 $correctId = self::$controller->getCorrectSessionId();  // Get the correct session ID
-                if($this->session->getSession(self::$sessionId) == $correctId && $correctId != "")
+                 //$correctId = self::$controller->getCorrectSessionId();  // Get the correct session ID
+                if($this->session->getSession(self::$sessionId) != "" && self::$controller->isSessionCorrect($this->session->getSession(self::$sessionId)) == true)
                 {
                     
                     return true;
