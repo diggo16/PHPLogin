@@ -72,8 +72,8 @@ class Controller
        return $message;
    }
    /**
-    * return the session id for the correct user
-    * @return string sessionId
+    * Return true if the session exists else return false
+    * @return boolean doesSessionExist
     */
    public function isSessionCorrect($userSession)
    {
