@@ -49,7 +49,6 @@ class LoginView {
 	public function response() {    
             
             $response = "";
-            //$correctId = self::$controller->getCorrectSessionId();
             // If the logout button is pushed
             if($this->post->isButtonPushed(self::$logout))
             {
@@ -167,7 +166,6 @@ class LoginView {
             }
             else
             {
-                 //$correctId = self::$controller->getCorrectSessionId();  // Get the correct session ID
                 if($this->session->getSession(self::$sessionId) != "" && self::$controller->isSessionCorrect($this->session->getSession(self::$sessionId)) == true)
                 {
                     
