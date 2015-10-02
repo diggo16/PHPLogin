@@ -19,6 +19,7 @@ class Controller
     private static $user;
     private $userFile;
     private $sessionId;
+    private $random;
     
     /**
     * Initialize other classes and save the sessionName and sessionPassword
@@ -33,16 +34,18 @@ class Controller
         require_once 'view/Feedback.php';
         require_once 'view/Cookies.php';
         require_once 'model/UserFile.php';
+        require_once('model/RandomString.php');
         
         $this->sessionId = $sessionId;
         $this->userFile = new UserFile();
+        $this->random = new RandomString();
         
         $this->updateUser();
          
         self::$user = new User();
         $this->session = new Session();
         
-        $id = $this->session->generateUniqueID();
+        $id = $this->random->generateUniqueID();
         $this->correctUser[0]->setSessionId($id);
         $this->sessionName = $sessionName;
         $this->sessionPassword = $sessionPassword;
@@ -99,7 +102,7 @@ class Controller
        if($message == "")
        {
            $loggedIn = true;
-           $sessionId = $this->session->generateUniqueID();
+           $sessionId = $this->random->generateUniqueID();
            $this->userFile->addUser($username, $password, $sessionId, "");
            $this->session->setSession($this->sessionId, $sessionId);
            self::$user->setSessionId($sessionId);
