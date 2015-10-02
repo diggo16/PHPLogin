@@ -42,8 +42,6 @@ class Controller
         self::$user = new User();
         $this->session = new Session();
         
-        $id = $this->session->generateUniqueID();
-        $this->correctUser[0]->setSessionId($id);
         $this->sessionName = $sessionName;
         $this->sessionPassword = $sessionPassword;
         $this->feedback = new Feedback();
