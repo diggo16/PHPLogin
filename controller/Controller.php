@@ -85,7 +85,7 @@ class Controller
                return true;
            }
        }
-       return false;//$this->correctUser[0]->getSessionId();
+       return false;
    }
    /**
     * Create the new user and return it. Log in the user if the info is correct.
@@ -161,11 +161,10 @@ class Controller
    }
    /**
     * If the cookies if correct return true else false
-    * @param string $cookieName
     * @param string $cookiePassword
     * @return boolean ifCookies
     */
-   public function authenticateCookies($cookieName, $cookiePassword)
+   public function authenticateCookies($cookiePassword)
    {
        foreach ($this->correctUser as $user) 
        {

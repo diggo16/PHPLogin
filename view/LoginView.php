@@ -72,7 +72,7 @@ class LoginView {
             else if($this->isCookies())
             {
                 // If the cookies is valid, login the person
-                if(self::$controller->authenticateCookies(self::$cookieName, self::$cookiePassword))
+                if(self::$controller->authenticateCookies(self::$cookiePassword))
                 {
                     self::$user->login();
                     $response = $this->generateLogoutButtonHTML($this->feedback->getWelcomeCookieMsg());
@@ -174,7 +174,7 @@ class LoginView {
                 if($this->isCookies())
                 {
 
-                    if(self::$controller->authenticateCookies(self::$cookieName, self::$cookiePassword))
+                    if(self::$controller->authenticateCookies(self::$cookiePassword))
                     {              
                         return true;
                     }
