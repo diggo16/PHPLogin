@@ -6,12 +6,16 @@
  */
 class UserFile 
 {
-    private static $filePath = "model/data";
+    private static $filePath = "";
+    private static $dataPath = "/../data";  // File path for local server
+    private static $webhostFilePath = "/home/a6244505/data";    // file path for the server
+    
     /**
      * Import User.php
      */
-    public function __construct() 
+    public function __construct($root) 
     {
+        self::$filePath = $root . self::$dataPath;
         require_once ('User.php');
     }
     /**
@@ -21,11 +25,7 @@ class UserFile
     public function getUsers() 
     {
         $users = array();
-        // Add directory if it doesn't exist
-        if (!file_exists(self::$filePath)) 
-        {
-            mkdir(self::$filePath, 0777, true);
-        }
+        self::$filePath = self::$webhostFilePath;       // When using on the web server
         // Check all files in the directory
         if ($handle = opendir(self::$filePath)) 
         {

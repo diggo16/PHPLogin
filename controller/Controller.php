@@ -33,9 +33,11 @@ class Controller
         require_once 'view/Feedback.php';
         require_once 'view/Cookies.php';
         require_once 'model/UserFile.php';
+        require_once('view/Server.php');
         
         $this->sessionId = $sessionId;
-        $this->userFile = new UserFile();
+        $server = new Server();
+        $this->userFile = new UserFile($server->getDocumentRootPath());
         
         $this->updateUser();
          

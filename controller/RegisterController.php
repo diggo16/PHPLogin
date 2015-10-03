@@ -15,12 +15,14 @@ class RegisterController
      */
     public function __construct() 
     {
-        require_once ("model/User.php");
-        require_once ('view/ExceptionMessages.php');
-        require_once ('model/RegisterRules.php');
+        require_once("model/User.php");
+        require_once('view/ExceptionMessages.php');
+        require_once('model/RegisterRules.php');
         require_once('model/UserFile.php');
+        require_once('view/Server.php');
         
-        $this->userFile = new UserFile();
+        $server = new Server();
+        $this->userFile = new UserFile($server->getDocumentRootPath());
         self::$usernameArray = array();
         self::$usernameArray[] = $this->userFile->getUsers();
         $this->exceptionMsg = new ExceptionMessages();
