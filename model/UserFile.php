@@ -21,6 +21,12 @@ class UserFile
     public function getUsers() 
     {
         $users = array();
+        // Add directory if it doesn't exist
+        if (!file_exists(self::$filePath)) 
+        {
+            mkdir(self::$filePath, 0777, true);
+        }
+        // Check all files in the directory
         if ($handle = opendir(self::$filePath)) 
         {
             while (false !== ($entry = readdir($handle))) 
