@@ -23,14 +23,4 @@ class RandomString
         $this->salt = uniqid(mt_rand(), true);
         return sha1($password + $this->salt); 
     }
-    /**
-     * Generate an unique id of the $username and $password
-     * @param string $username
-     * @param string $password
-     * @return string
-     */
-    public function generateUniqueID()
-    {
-        return rand(0,10000000000000000000000); // random number between 0 and 10000000000000000000000  
-    }
 }
