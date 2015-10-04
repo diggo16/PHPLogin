@@ -20,6 +20,7 @@ class RandomString
     }
     public function generateUniqueString($password)
     {
+        $this->salt = uniqid(mt_rand(), true);
         return sha1($password + $this->salt); 
     }
     /**

@@ -19,6 +19,7 @@ class Controller
     private static $user;
     private $userFile;
     private $sessionId;
+    private $random;
     
     /**
     * Initialize other classes and save the sessionName and sessionPassword
@@ -34,7 +35,9 @@ class Controller
         require_once 'view/Cookies.php';
         require_once 'model/UserFile.php';
         require_once('view/Server.php');
+        require_once('model/RandomString.php');
         
+        $this->random = new RandomString();
         $this->sessionId = $sessionId;
         $server = new Server();
         $this->userFile = new UserFile($server->getDocumentRootPath());
@@ -106,7 +109,7 @@ class Controller
        if($message == "")
        {
            $loggedIn = true;
-           $sessionId = $this->session->generateUniqueID();
+           $sessionId = $this->random->generateUniqueString($password);
            $this->userFile->addUser($username, $password, $sessionId, "");
            $this->session->setSession($this->sessionId, $sessionId);
            self::$user->setSessionId($sessionId);
@@ -153,7 +156,7 @@ class Controller
        $user = $this->authenticate($username, $password);
        if($user != null)
        {
-           $cookiePass = $this->cookies->generateCookiePassword();
+           $cookiePass = $this->random->generateUniqueString($password);
            $this->cookies->setCookie($cookieName, self::$user->getUsername());
            $this->cookies->setCookie($cookiePassword, $cookiePass);
            self::$user->setCookiePassword($cookiePass);
