@@ -13,14 +13,14 @@
  */
 class RandomString 
 {
-    private $salt;
-    public function construct()
-    {
-        $this->salt = uniqid(mt_rand(), true);
-    }
+    /**
+     * Generate a random secure hashcode of a random number and the password
+     * @param string $password
+     * @return string randomString
+     */
     public function generateUniqueString($password)
     {
-        $this->salt = uniqid(mt_rand(), true);
-        return sha1($password + $this->salt); 
+        $salt = uniqid(mt_rand(), true);
+        return sha1($password + $salt); 
     }
 }
