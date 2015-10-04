@@ -33,15 +33,4 @@ class Cookies
     {
         setcookie($cookieName,"",time()-1);
     }
-    /**
-     * Generate a secure String 
-     * that becomes a cookie password
-     * @param string $username
-     * @param string $password
-     * @return string cookiePassword
-     */
-    public function generateCookiePassword()
-    {
-        return rand(0,100000000000);
-    }
 }

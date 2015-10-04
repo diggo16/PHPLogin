@@ -29,16 +29,6 @@ class Session
         }
         return $string;
     }
-        /**
-     * Generate an unique id of the $username and $password
-     * @param string $username
-     * @param string $password
-     * @return string
-     */
-    public function generateUniqueID()
-    {
-        return rand(0,100000000000); // random number between 0 and 100000000000
-    }
     /**
      * Destroy the session
      */
