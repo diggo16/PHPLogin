@@ -89,7 +89,6 @@ class RegisterView
      */
     private function checkData()
     {
-        $this->showUsername = true;     //TODO:unused?
         // Call the controller to check for errors
         $errors = self::$controller->registerUser($this->post->getStringWithoutFilter(self::$username),
                                                    $this->post->getString(self::$password), 
@@ -102,8 +101,7 @@ class RegisterView
      */
     public function generateRegisterLink() 
     {
-        $response = "<a href='?" . self::$register . "'>Register a new user</a>";   //TODO refactor with method below?
-        return $response;
+        return $this->generateLink(self::$register, "Register a new user");
     }
     /**
      * Generate a back to login text link in html
@@ -111,7 +109,17 @@ class RegisterView
      */
     public function generateBackToLoginLink()
     {
-        $response = "<a href='?'>Back to login</a>";
+        return $this->generateLink("", "Back to login");
+    }
+    /**
+     * Generate a html link
+     * @param string $link
+     * @param string $text
+     * @return string htmlLink
+     */
+    private function generateLink($link, $text)
+    {
+        $response = "<a href='?" . $link . "'>" . $text . "</a>";
         return $response;
     }
     /**
