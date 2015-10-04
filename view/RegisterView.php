@@ -128,7 +128,7 @@ class RegisterView
      */
     public function isRegisterTextClicked()
     {
-        if(isset($_GET[self::$register]))   // TODO change to post->isButtonClicked()
+        if(isset($_GET[self::$register]))
         {
             return true;
         }
@@ -211,9 +211,9 @@ class RegisterView
      * Get the string for a successful registration
      * @return string successfulRegistration
      */
-    public function getSucessfulFeedback()  // TODO misspell successful
+    public function getSuccessfulFeedback()
     {
-        return $this->feedback->getSucessfulRegistration();
+        return $this->feedback->getSuccessfulRegistration();
     }
     /**
      * return the newly created user's username

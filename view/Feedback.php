@@ -90,7 +90,7 @@ class Feedback
     {
         return "Username contains invalid characters.";
     }
-    public function getSucessfulRegistration()
+    public function getSuccessfulRegistration()
     {
         return "Registered new user.";
     }
