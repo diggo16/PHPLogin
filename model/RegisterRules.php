@@ -12,11 +12,9 @@ class RegisterRules
     /**
      * Initialize and collect the used usernames
      */
-    public function __construct() 
+    public function __construct($usedUsernames) 
     {
-        $this->usedUsernames = array();
-        // TODO: add correct information to used usernames
-        array_push($this->usedUsernames, "Admin");
+        $this->usedUsernames = $usedUsernames;
     }
     /**
      * Check if the username is longer or equal than $usernameMinLength

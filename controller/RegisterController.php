@@ -24,9 +24,13 @@ class RegisterController
         $server = new Server();
         $this->userFile = new UserFile($server->getDocumentRootPath());
         self::$usernameArray = array();
-        self::$usernameArray[] = $this->userFile->getUsers();
+        $users = $this->userFile->getUsers();
+        foreach ($users as $user)
+        {
+            self::$usernameArray[] = $user->getUsername();
+        }
         $this->exceptionMsg = new ExceptionMessages();
-        $this->registerRules = new RegisterRules();
+        $this->registerRules = new RegisterRules(self::$usernameArray);
     }
     /**
      * Check if the information is valid, else return error messages
