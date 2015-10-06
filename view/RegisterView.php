@@ -214,4 +214,8 @@ class RegisterView
     {
         return $this->post->getString(self::$username);
     }
+    public function getTempUsername()
+    {
+        return self::$controller->getTempUsername();
+    }
 }
