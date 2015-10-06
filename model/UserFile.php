@@ -23,7 +23,6 @@ class UserFile
         self::$filePath = self::$webhostFilePath;
         self::$tempFilePath = self::$filePath . "/temp.txt";
         require_once ('User.php');
-        
         if(file_exists(self::$filePath) == false)
         {
             mkdir(self::$filePath, 0777, true);
@@ -43,7 +42,7 @@ class UserFile
     public function getUsers() 
     {
         $users = array();
-        self::$filePath = self::$root . self::$dataPath . self::$userFilePath;
+        self::$filePath = self::$webhostFilePath . self::$userFilePath;
         // Check all files in the directory
         if ($handle = opendir(self::$filePath)) 
         {
