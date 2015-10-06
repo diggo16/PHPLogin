@@ -9,14 +9,32 @@ class UserFile
     private static $filePath = "";
     private static $dataPath = "/../data";  // File path for local server
     private static $webhostFilePath = "/home/a6244505/data";    // file path for the server
+    private static $userFilePath = "/users";
+    private static $tempFilePath;
+    private static $root;
     
     /**
      * Import User.php
      */
     public function __construct($root) 
     {
+        self::$root = $root;
         self::$filePath = $root . self::$dataPath;
+        self::$filePath = self::$webhostFilePath;
+        self::$tempFilePath = self::$filePath . "/temp.txt";
         require_once ('User.php');
+        
+        if(file_exists(self::$filePath) == false)
+        {
+            mkdir(self::$filePath, 0777, true);
+            $userFilePath = self::$filePath . "/users";
+            mkdir($userFilePath, 0777, true);
+            $this->addUser("Admin", "Password", 0, 0);
+        }
+        if(file_exists(self::$tempFilePath) == false)
+        {
+            fopen(self::$tempFilePath, "w"); 
+        }
     }
     /**
      * Get an array of the existing users
@@ -25,7 +43,7 @@ class UserFile
     public function getUsers() 
     {
         $users = array();
-        self::$filePath = self::$webhostFilePath;       // When using on the web server
+        self::$filePath = self::$root . self::$dataPath . self::$userFilePath;
         // Check all files in the directory
         if ($handle = opendir(self::$filePath)) 
         {
@@ -121,5 +139,17 @@ class UserFile
               return $user;
           }
         }
+    }
+    public function addToTemp($username)
+    {
+        file_put_contents(self::$tempFilePath, $username);
+    }
+    public function getTempUsername()
+    {
+        return trim(file_get_contents(self::$tempFilePath)); 
+    }
+    public function clearTemp()
+    {
+        file_put_contents(self::$tempFilePath, "");
     }
 }

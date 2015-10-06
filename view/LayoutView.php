@@ -62,15 +62,26 @@ class LayoutView {
             //If the registration was correct, return to login form
             if($response == "")
             {
-                $response = $v->responseWithParameters($rv->getSuccessfulFeedback(), $rv->getUsername());
-                $this->isLoggedIn = false;
+                header('Location: ?');
+                //$response = $v->responseWithParameters($rv->getSuccessfulFeedback(), $rv->getUsername());
+                //$this->isLoggedIn = false;
             }
         }
         //Else show the LoginView
         else
         {
-            $response = $response = $v->response();
-            $this->isLoggedIn = $v->isLoggedIn();
+            $username = $rv->getTempUsername();
+            if($username != "")
+            {
+                $response = $v->responseWithParameters($rv->getSuccessfulFeedback(), $username);
+                $this->isLoggedIn = false;
+            }
+            else
+            {
+                $response = $response = $v->response();
+                $this->isLoggedIn = $v->isLoggedIn();
+            }
+            
         }
         return $response;
     }

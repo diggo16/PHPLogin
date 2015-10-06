@@ -41,6 +41,7 @@ class RegisterController
      */
     public function registerUser($username, $password, $repeatPassword) 
     {
+        //TODO refactor
         $errors = array();
         // If the username is too short
         if($this->registerRules->checkUsernameFormat($username) == false)
@@ -70,6 +71,7 @@ class RegisterController
         if(count($errors) == 0)
         {
             $this->saveUser($username, $password);
+            $this->userFile->addToTemp($username);
         }
         return $errors;
     }
@@ -81,5 +83,11 @@ class RegisterController
     public function saveUser($username, $password)
     {
         $this->userFile->addUser($username, $password, "", "");
+    }
+    public function getTempUsername()
+    {
+        $username = $this->userFile->getTempUsername();
+        $this->userFile->clearTemp();
+        return $username;
     }
 }
