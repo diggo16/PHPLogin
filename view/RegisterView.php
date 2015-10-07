@@ -11,10 +11,10 @@ class RegisterView
     private $feedback;
     
     private static $register = "register";
-    private static  $message = "RegisterView::Message";
-    private static  $username = "RegisterView::UserName";
-    private static  $password = "RegisterView::Password";
-    private static  $repeatPassword = "RegisterView::PasswordRepeat";
+    private static $message = "RegisterView::Message";
+    private static $username = "RegisterView::UserName";
+    private static $password = "RegisterView::Password";
+    private static $repeatPassword = "RegisterView::PasswordRepeat";
     private static $registration = "RegisterView::Register";    // LoginView::Login
     private static $textLength = 20;
     private static $controller;
@@ -63,7 +63,7 @@ class RegisterView
      * @param string $username
      * @return string htmlString
      */
-    private function getRegisterFormResponse($message, $username)
+    public function getRegisterFormResponse($message, $username)
     {
         return "<h2>Register new user</h2>
 			<form action='?register' method='post' enctype='multipart/form-data'>
@@ -217,5 +217,21 @@ class RegisterView
     public function getTempUsername()
     {
         return self::$controller->getTempUsername();
+    }
+    public function getPassword()
+    {
+        $this->post->getString(self::$password);  
+    }
+    public function getRepeatPassword()
+    {
+        $this->post->getString(self::$repeatPassword);
+    }
+    public function isSubmitButtonClicked()
+    {
+       if($this->post->isButtonPushed(self::$registration))
+       {
+           return true;
+       }
+       return false;
     }
 }

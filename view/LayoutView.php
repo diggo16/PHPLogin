@@ -85,9 +85,9 @@ class LayoutView {
         }
         return $response;
     }
-    public function newRender(LoginView $v, DateTimeView $dtv, RegisterView $rv, User $user)
+    public function newRender(HTMLView $v, DateTimeView $dtv, RegisterView $rv, User $user)
     {
-        $response = $v->responseWithUser($user);
+        $response = $v->getView();
         $this->isLoggedIn = $user->isLoggedIn();
         $registerResponse = $rv->generateTextLink($this->isLoggedIn);
         echo '<!DOCTYPE html>

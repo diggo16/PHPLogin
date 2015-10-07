@@ -102,4 +102,8 @@ class User
     {
         $this->isLoggedIn = false;
     }
+    public function setMessage($message)
+    {
+        $this->message = $message;
+    }
 }

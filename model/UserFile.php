@@ -12,6 +12,7 @@ class UserFile
     private static $userFilePath = "/users";
     private static $tempFilePath;
     private static $root;
+    private static $messageFilePath = "/previousMessage.txt";
     
     /**
      * Import User.php
@@ -21,7 +22,7 @@ class UserFile
         require_once ('User.php');
         self::$root = $root;
         self::$filePath = $root;
-        //self::$filePath = self::$webhostFilePath;
+        self::$filePath = self::$webhostFilePath;
         self::$tempFilePath = self::$filePath . "/temp.txt";
         
         if(file_exists(self::$filePath) == false)
@@ -43,8 +44,8 @@ class UserFile
     public function getUsers() 
     {
         $users = array();
-        //self::$filePath = self::$webhostFilePath . self::$userFilePath;   //webbserver
-        self::$filePath = self::$root . self::$dataPath . self::$userFilePath;  //local server
+        self::$filePath = self::$webhostFilePath . self::$userFilePath;   //webbserver
+        //self::$filePath = self::$root . self::$dataPath . self::$userFilePath;  //local server
         // Check all files in the directory
         if ($handle = opendir(self::$filePath)) 
         {
@@ -152,5 +153,14 @@ class UserFile
     public function clearTemp()
     {
         file_put_contents(self::$tempFilePath, "");
+    }
+    public function setPreviousMessage($message)
+    {
+        $filePath = self::$webhostFilePath . self::$messageFilePath;
+        file_put_contents($filePath, $message);
+    }
+    public function getPreviousMessage()
+    {
+        return file_get_contents($filePath = self::$webhostFilePath . self::$messageFilePath);
     }
 }

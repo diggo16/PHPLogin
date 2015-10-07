@@ -10,6 +10,7 @@ class RegisterController
     private $registerRules;
     private $exceptionMsg;
     private $userFile;
+    private $feedback;
     /**
      * Initialize objects
      */
@@ -20,7 +21,10 @@ class RegisterController
         require_once('model/RegisterRules.php');
         require_once('model/UserFile.php');
         require_once('view/Server.php');
+        require_once('view/Feedback.php');
         
+        $this->feedback = new Feedback();
+       
         $server = new Server();
         $this->userFile = new UserFile($server->getDocumentRootPath());
         self::$usernameArray = array();
@@ -89,5 +93,49 @@ class RegisterController
         $username = $this->userFile->getTempUsername();
         $this->userFile->clearTemp();
         return $username;
+    }
+    /**
+     * Check the array and translate the error codes to strings
+     * @param array $errorArr
+     * @return string errorMessages
+     */
+    public function getErrorMessages($errorArr)
+    {
+        $message = "";
+        // Array with every exception errors
+        $exceptionArr = array($this->exceptionMsg->getUsernameTooShort(),
+                              $this->exceptionMsg->getPasswordTooShort(),
+                              $this->exceptionMsg->getUsernameExists(),
+                              $this->exceptionMsg->getPasswordsDontMatch(),
+                              $this->exceptionMsg->getInvalidUsername());
+        // Array with every feedback messages
+        $feedbackArr = array($this->feedback->getUsernameTooShortMsg(),
+                             $this->feedback->getPasswordTooShortMsg(),
+                             $this->feedback->getUsernameAlreayExists(),
+                             $this->feedback->getPasswordsDontMatch(),
+                             $this->feedback->getUsernameIsInvalidMsg());
+        // Check if the error is in the errorArray and add a message if there is
+        for($i = 0; $i < count($exceptionArr); $i++)
+        {
+            if(in_array($exceptionArr[$i], $errorArr))
+            {
+                $message = $this->ifAddBreak($message);
+                $message .= $feedbackArr[$i];       // add message
+            } 
+        }
+        return $message;
+    }
+        /**
+     * Add a break to the string if the messsage isn't empty
+     * @param string $message
+     * @return string $message
+     */
+    private function ifAddBreak($message)
+    {
+        if($message != "")
+        {
+            $message .= "<br />";
+        }
+        return $message;
     }
 }
