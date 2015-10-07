@@ -18,11 +18,12 @@ class UserFile
      */
     public function __construct($root) 
     {
-        self::$root = $root;
-        self::$filePath = $root . self::$dataPath;
-        self::$filePath = self::$webhostFilePath;
-        self::$tempFilePath = self::$filePath . "/temp.txt";
         require_once ('User.php');
+        self::$root = $root;
+        self::$filePath = $root;
+        //self::$filePath = self::$webhostFilePath;
+        self::$tempFilePath = self::$filePath . "/temp.txt";
+        
         if(file_exists(self::$filePath) == false)
         {
             mkdir(self::$filePath, 0777, true);
@@ -42,7 +43,8 @@ class UserFile
     public function getUsers() 
     {
         $users = array();
-        self::$filePath = self::$webhostFilePath . self::$userFilePath;
+        //self::$filePath = self::$webhostFilePath . self::$userFilePath;   //webbserver
+        self::$filePath = self::$root . self::$dataPath . self::$userFilePath;  //local server
         // Check all files in the directory
         if ($handle = opendir(self::$filePath)) 
         {

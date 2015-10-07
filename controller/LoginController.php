@@ -11,7 +11,7 @@ class LoginController
     private $session;
     private $sessionName;
     private $sessionPassword;
-    private $correctUser;
+    private $correctUsers;
     private $feedback;
     private $cookies;
     private $username;
@@ -26,7 +26,7 @@ class LoginController
     * @param string $sessionName
     * @param string $sessionPassword
     */
-    public function __construct($sessionName, $sessionPassword, $sessionId) 
+    public function __construct() 
     {
         require_once 'model/LoginRules.php';
         require_once 'model/User.php';
@@ -38,7 +38,6 @@ class LoginController
         require_once('model/RandomString.php');
         
         $this->random = new RandomString();
-        $this->sessionId = $sessionId;
         $server = new Server();
         $this->userFile = new UserFile($server->getDocumentRootPath());
         
@@ -47,8 +46,6 @@ class LoginController
         self::$user = new User();
         $this->session = new Session();
         
-        $this->sessionName = $sessionName;
-        $this->sessionPassword = $sessionPassword;
         $this->feedback = new Feedback();
         $this->cookies = new Cookies();
         
@@ -83,7 +80,7 @@ class LoginController
    public function isSessionCorrect($userSession)
    {
        $this->updateUser();
-       foreach ($this->correctUser as $user) 
+       foreach ($this->correctUsers as $user) 
        {
            if($user->getSessionId() == $userSession)
            {
@@ -159,6 +156,7 @@ class LoginController
            $cookiePass = $this->random->generateUniqueString($password);
            $this->cookies->setCookie($cookieName, self::$user->getUsername());
            $this->cookies->setCookie($cookiePassword, $cookiePass);
+           echo "cookie:" . $cookiePassword . ":" . $this->cookies->getCookie($cookiePassword);
            self::$user->setCookiePassword($cookiePass);
            $this->userFile->addUser($username, $password, self::$user->getSessionId(), $cookiePass);
        }
@@ -171,7 +169,7 @@ class LoginController
     */
    public function authenticateCookies($cookiePassword)
    {
-       foreach ($this->correctUser as $user) 
+       foreach ($this->correctUsers as $user) 
        {
            if($this->cookies->getCookie($cookiePassword) == $user->getCookiePassword())
            {
@@ -186,7 +184,7 @@ class LoginController
     */
     private function updateUser() 
     {
-       $this->correctUser = $this->userFile->getUsers();
-       $this->loginRules = new LoginRules($this->correctUser);
+       $this->correctUsers = $this->userFile->getUsers();
+       $this->loginRules = new LoginRules($this->correctUsers);
    }
 }

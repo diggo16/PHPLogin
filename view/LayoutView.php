@@ -85,4 +85,29 @@ class LayoutView {
         }
         return $response;
     }
+    public function newRender(LoginView $v, DateTimeView $dtv, RegisterView $rv, User $user)
+    {
+        $response = $v->responseWithUser($user);
+        $this->isLoggedIn = $user->isLoggedIn();
+        $registerResponse = $rv->generateTextLink($this->isLoggedIn);
+        echo '<!DOCTYPE html>
+        <html>
+          <head>
+            <meta charset="utf-8">
+            <title>Login Example</title>
+          </head>
+          <body>
+            <h1>Assignment 2</h1>
+            ' . $registerResponse . $this->renderIsLoggedIn() . '
+
+            <div class="container">
+                ' . $response . '
+
+                ' . $dtv->show() . '
+            </div>
+           </body>
+        </html>
+      ';
+        
+    }
 }

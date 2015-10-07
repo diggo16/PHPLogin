@@ -227,10 +227,73 @@ class LoginView {
          * Check if there is cookies
          * @return boolean isCookies
          */
-        private function isCookies()
+        public function isCookies()
         {
             // If the cookies is not empty
             if($this->cookies->getCookie(self::$cookieName) !="" && $this->cookies->getCookie(self::$cookiePassword))
+            {
+                return true;
+            }
+            return false;
+        }
+        public function isSession()
+        {
+            if($this->session->getSession(self::$sessionId))
+            {
+                return true;
+            }
+            return false;
+        }
+        public function isLoggedInButtonPushed()
+        {
+            if($this->post->isButtonPushed(self::$login))
+            {
+                return true;
+            }
+            return false;
+        }
+        public function isLoggedOutButtonPushed() 
+        {
+            if($this->post->isButtonPushed(self::$logout))
+            {
+                return true;
+            }
+            return false;
+        }
+        public function getUsername()
+        {
+            return $this->post->getString(self::$name);
+        }
+        public function getPassword()
+        {
+             return $this->post->getString(self::$password);
+        }
+        public function responseWithUser(User $user)
+        {
+            if($user->isLoggedIn())
+            {
+                return $this->generateLogoutButtonHTML($user->getMessage());
+            }
+            else 
+            {
+               return $this->generateLoginFormHTML($user->getMessage(), $user->getUsername()); 
+            }
+        }
+        public function getSessionId()
+        {
+            return $this->session->getSession(self::$sessionId);
+        }
+        public function setSessionId($id)
+        {
+            $this->session->setSession(self::$sessionId, $id);
+        }
+        public function getCookieName()
+        {
+            return self::$cookiePassword;
+        }
+        public function isKeepChecked()
+        {
+            if($this->post->isButtonPushed(self::$keep))
             {
                 return true;
             }
