@@ -1,6 +1,6 @@
 <?php
 /**
- * Description of RegisterView
+ * View for the registration
  *
  * @author daniel
  */
@@ -155,7 +155,7 @@ class RegisterView
         return $this->post->getStringWithoutFilter(self::$username);
     }
     /**
-     * 
+     * Get password
      * @return string password
      */
     public function getPassword()
@@ -163,7 +163,7 @@ class RegisterView
         return $this->post->getString(self::$password);  
     }
     /**
-     * 
+     * Get repeat password
      * @return string repeatPassword
      */
     public function getRepeatPassword()
@@ -171,7 +171,7 @@ class RegisterView
         return $this->post->getString(self::$repeatPassword);
     }
     /**
-     * 
+     * Check if submit button is clicked
      * @return boolean isSubmitButtonClicked
      */
     public function isSubmitButtonClicked()
@@ -182,5 +182,4 @@ class RegisterView
        }
        return false;
     }
-
 }
