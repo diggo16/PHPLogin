@@ -26,7 +26,12 @@ class PostObjects
      */
     public function getString($POSTName)
     {
-        return filter_input(INPUT_POST,$POSTName,FILTER_SANITIZE_STRING);
+        if(isset($_POST[$POSTName]))
+        {
+            return filter_input(INPUT_POST,$POSTName,FILTER_SANITIZE_STRING);
+        }
+        return "";
+        
     }
     /**
      * Return the string from POST with the name $POSTName 
@@ -44,6 +49,10 @@ class PostObjects
     }
     public function unsetString($name)
     {
-        unset($_POST[$name]);
+        if(isset($_POST[$name]))
+        {
+            unset($_POST[$name]);
+        }
+        
     }
 }
