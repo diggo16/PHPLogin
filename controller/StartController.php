@@ -23,6 +23,8 @@ class StartController
     private $loginController;
     private $registerController;
     
+    private $errors;
+    
     public function __construct(User $user, LoginController $loginController) 
     {
          //INCLUDE THE FILES NEEDED...
@@ -52,6 +54,8 @@ class StartController
         //controllers
         $this->loginController = $loginController;
         $this->registerController = new RegisterController();
+        
+        $this->errors = array();
     }
     /**
      * Show the website
@@ -73,14 +77,15 @@ class StartController
         if($this->registerView->isSubmitButtonClicked())
         {
             $this->register();
-            if($this->registerController->isTempUsernameExist())
+            if($this->registerController->isNewUser())
             {               
                 header("location:?");
             }
         }
         if($this->registerView->isRegisterTextClicked())
         {
-            $this->view->setView($this->registerView->generateRegisterForm());
+            $this->view->setView($this->registerView->generateRegisterForm($this->registerController->getErrorMessages($this->errors)));
+            $this->errors = array();
         }
         else if($temp == "")
         {
@@ -123,12 +128,7 @@ class StartController
     {
         $username = $this->registerView->getUsername();
         $password = $this->registerView->getPassword();
-        $errors = $this->registerController->registerUser($username, $password, $this->registerView->getRepeatPassword());
-        if(count($errors) == 0)
-        {
-            header("location: ?");
-        }
-        
+        $this->errors = $this->registerController->registerUser($username, $password, $this->registerView->getRepeatPassword());     
     }
     private function isLoggingIn()
     {

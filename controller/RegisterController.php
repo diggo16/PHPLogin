@@ -11,6 +11,7 @@ class RegisterController
     private $exceptionMsg;
     private $userFile;
     private $feedback;
+    private $session;
     private static $newRegistration = "RegisterController::newRegistration";
     /**
      * Initialize objects
@@ -23,8 +24,11 @@ class RegisterController
         require_once('model/UserFile.php');
         require_once('view/Server.php');
         require_once('view/Feedback.php');
+        require_once('view/RegisterView.php');
+        require_once('view/Session.php');
         
         $this->feedback = new Feedback();
+        $this->session = new Session();
        
         $server = new Server();
         $this->userFile = new UserFile($server->getDocumentRootPath());
@@ -75,7 +79,7 @@ class RegisterController
         }
         if(count($errors) == 0)
         {
-            $_SESSION[self::$newRegistration] = "yes";
+            $this->session->setSession(self::$newRegistration, "yes");
             $this->saveUser($username, $password);
             $this->userFile->addToTemp($username);
             header("location:?");
@@ -97,11 +101,12 @@ class RegisterController
         $this->userFile->clearTemp();
         return $username;
     }
-    public function isTempUsernameExist()
+    public function isNewUser()
     {
-        if(isset($_SESSION[self::$newRegistration]))
+        if($this->session->getSession(self::$newRegistration) != "")
         {
             unset($_SESSION[self::$newRegistration]);
+            $this->session->removeSession(self::$newRegistration);
             return true;
         }
         return false;
@@ -149,5 +154,10 @@ class RegisterController
             $message .= "<br />";
         }
         return $message;
+    }
+    public function getRegisterErrors($errors)
+    {
+        return $this->getErrorMessages($errors);
+        
     }
 }

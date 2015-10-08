@@ -17,18 +17,15 @@ class RegisterView
     private static $repeatPassword = "RegisterView::PasswordRepeat";
     private static $registration = "RegisterView::Register";
     private static $textLength = 20;
-    private static $controller;
     /**
      * Initializa objects
      */
     public function __construct() 
     {
         require_once ('PostObjects.php');
-        require_once ('controller/RegisterController.php');
         require_once ('ExceptionMessages.php');
         require_once ('Feedback.php');
         $this->post = new PostObjects();
-        self::$controller = new RegisterController();
         $this->exceptionMsg = new ExceptionMessages();
         $this->feedback = new Feedback();
     }
@@ -37,13 +34,12 @@ class RegisterView
      * registration information
      * @return string htmlString
      */
-    public function generateRegisterForm() 
+    public function generateRegisterForm($message) 
     {
         $response = "";
         // If the registration button is pushed
         if(isset($_POST[self::$registration]))
         {
-            $message = $this->checkData();
             // If there is error in the input values
             if($message != "")
             {
@@ -82,18 +78,6 @@ class RegisterView
 					<input id='submit' type='submit' name='" .self::$registration . "'  value='Register' />
 					<br/>
 				</fieldset>";
-    }
-    /**
-     * Call the controller and return error messages if there was any errors
-     * @return string errorMessages
-     */
-    private function checkData()
-    {
-        // Call the controller to check for errors
-        $errors = self::$controller->registerUser($this->post->getStringWithoutFilter(self::$username),
-                                                   $this->post->getString(self::$password), 
-                                                   $this->post->getString(self::$repeatPassword));
-        return $this->getErrorMessages($errors);    // Translate the error codes to strings
     }
     /**
      * Generate a register text link in html
@@ -155,50 +139,6 @@ class RegisterView
         return $response;
     }
     /**
-     * Check the array and translate the error codes to strings
-     * @param array $errorArr
-     * @return string errorMessages
-     */
-    private function getErrorMessages($errorArr)
-    {
-        $message = "";
-        // Array with every exception errors
-        $exceptionArr = array($this->exceptionMsg->getUsernameTooShort(),
-                              $this->exceptionMsg->getPasswordTooShort(),
-                              $this->exceptionMsg->getUsernameExists(),
-                              $this->exceptionMsg->getPasswordsDontMatch(),
-                              $this->exceptionMsg->getInvalidUsername());
-        // Array with every feedback messages
-        $feedbackArr = array($this->feedback->getUsernameTooShortMsg(),
-                             $this->feedback->getPasswordTooShortMsg(),
-                             $this->feedback->getUsernameAlreayExists(),
-                             $this->feedback->getPasswordsDontMatch(),
-                             $this->feedback->getUsernameIsInvalidMsg());
-        // Check if the error is in the errorArray and add a message if there is
-        for($i = 0; $i < count($exceptionArr); $i++)
-        {
-            if(in_array($exceptionArr[$i], $errorArr))
-            {
-                $message = $this->ifAddBreak($message);
-                $message .= $feedbackArr[$i];       // add message
-            } 
-        }
-        return $message;
-    }
-    /**
-     * Add a break to the string if the messsage isn't empty
-     * @param string $message
-     * @return string $message
-     */
-    private function ifAddBreak($message)
-    {
-        if($message != "")
-        {
-            $message .= "<br />";
-        }
-        return $message;
-    }
-    /**
      * Get the string for a successful registration
      * @return string successfulRegistration
      */
@@ -212,20 +152,28 @@ class RegisterView
      */
     public function getUsername()
     {
-        return $this->post->getString(self::$username);
+        return $this->post->getStringWithoutFilter(self::$username);
     }
-    public function getTempUsername()
-    {
-        return self::$controller->getTempUsername();
-    }
+    /**
+     * 
+     * @return string password
+     */
     public function getPassword()
     {
-        $this->post->getString(self::$password);  
+        return $this->post->getString(self::$password);  
     }
+    /**
+     * 
+     * @return string repeatPassword
+     */
     public function getRepeatPassword()
     {
-        $this->post->getString(self::$repeatPassword);
+        return $this->post->getString(self::$repeatPassword);
     }
+    /**
+     * 
+     * @return boolean isSubmitButtonClicked
+     */
     public function isSubmitButtonClicked()
     {
        if($this->post->isButtonPushed(self::$registration))
@@ -234,4 +182,5 @@ class RegisterView
        }
        return false;
     }
+
 }
