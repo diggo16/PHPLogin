@@ -53,27 +53,36 @@ class StartController
         $this->loginController = $loginController;
         $this->registerController = new RegisterController();
     }
+    /**
+     * Show the website
+     */
     public function showWebsite()
     {    
-        if($this->userFile->getPreviousMessage() != $this->feedback->getSuccessfulRegistration())
+        $temp = $this->registerController->getTempUsername();
+        //Change previous message
+        if($temp == "")
         {
             $this->userFile->setPreviousMessage($this->user->getMessage());
         }
         else
         {
             $this->userFile->setPreviousMessage("");
-            $this->user->setNewInfo($this->userFile->getTempUsername(), "", false, $this->feedback->getSuccessfulRegistration());
+            $this->user->setNewInfo($temp, "", false, $this->feedback->getSuccessfulRegistration());
             $this->view->setView($this->loginView->responseWithUser($this->user));
         }
         if($this->registerView->isSubmitButtonClicked())
         {
             $this->register();
+            if($this->registerController->isTempUsernameExist())
+            {               
+                header("location:?");
+            }
         }
         if($this->registerView->isRegisterTextClicked())
         {
             $this->view->setView($this->registerView->generateRegisterForm());
         }
-        else
+        else if($temp == "")
         {
             $this->view->setView($this->loginView->responseWithUser($this->user));
         }
@@ -114,7 +123,12 @@ class StartController
     {
         $username = $this->registerView->getUsername();
         $password = $this->registerView->getPassword();
-        $this->registerController->registerUser($username, $password, $this->registerView->getRepeatPassword());
+        $errors = $this->registerController->registerUser($username, $password, $this->registerView->getRepeatPassword());
+        if(count($errors) == 0)
+        {
+            header("location: ?");
+        }
+        
     }
     private function isLoggingIn()
     {

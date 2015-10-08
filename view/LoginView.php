@@ -13,7 +13,6 @@ class LoginView {
         private static $sessionId = "Session::Id";
         private static $sessionMessage = "Session:Message";
         
-        private static $controller;
         private static $user;
         private $session;
         private $feedback;
@@ -25,13 +24,11 @@ class LoginView {
          */
         public function __construct() 
         {
-            require_once('controller/LoginController.php');
             require_once('Session.php');
             require_once('Feedback.php');
             require_once('PostObjects.php');
             require_once('Cookies.php');
             
-            self::$controller = new LoginController(self::$sessionName, self::$sessionPassword, self::$sessionId);
             self::$user = new User();
               
             $this->session = new Session();
@@ -125,6 +122,14 @@ class LoginView {
 			</form>
 		';
 	}
+        public function generateHTML($loggedIn, $message, $username)
+        {
+            if($loggedIn == true)
+            {
+                return $this->generateLogoutButtonHTML($message);
+            }
+            return $this->generateLoginFormHTML($message, $username);
+        }
 	
 	/**
 	* Generate HTML code on the output buffer for the logout button

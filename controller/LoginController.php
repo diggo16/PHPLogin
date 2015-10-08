@@ -7,7 +7,6 @@
 class LoginController 
 {
     private $loginRules;
-    private $loginView;
     private $session;
     private $sessionName;
     private $sessionPassword;
@@ -20,13 +19,14 @@ class LoginController
     private $userFile;
     private $sessionId;
     private $random;
+    private $loginView;
     
     /**
     * Initialize other classes and save the sessionName and sessionPassword
     * @param string $sessionName
     * @param string $sessionPassword
     */
-    public function __construct() 
+    public function __construct(LoginView $loginView) 
     {
         require_once 'model/LoginRules.php';
         require_once 'model/User.php';
@@ -36,6 +36,8 @@ class LoginController
         require_once 'model/UserFile.php';
         require_once('view/Server.php');
         require_once('model/RandomString.php');
+        
+        $this->loginView = $loginView;
         
         $this->random = new RandomString();
         $server = new Server();
@@ -125,12 +127,10 @@ class LoginController
    * @param type $cookieName
    * @param type $cookiePassword
    */
-   public function logout($sessionUsername, $sessionPassword, $cookieName, $cookiePassword)
+   public function logout($cookieName, $cookiePassword)
    {
        $sessionId = $this->session->getSession($this->sessionId);
         // Remove session
-        $this->session->removeSession($sessionUsername);
-        $this->session->removeSession($sessionPassword);
         $this->session->removeSession($this->sessionId);
         $this->session->destroySession();
         $this->cookies->clearCookie($cookieName);
@@ -186,5 +186,58 @@ class LoginController
     {
        $this->correctUsers = $this->userFile->getUsers();
        $this->loginRules = new LoginRules($this->correctUsers);
+   }
+   public function getResponse()
+   {
+       $response = "";
+            // If the logout button is pushed
+            if($this->post->isButtonPushed(self::$logout))
+            {
+                // If it exists session info
+                if($this->session->getSession(self::$sessionId) != "")
+                {
+                    $response = $this->loginView->generateHTML(false, $this->feedback->getByeMsg(), "");
+                }
+                else 
+                {
+                   $response = $this->loginView->generateHTML(false, "", "");
+                }
+                $this->logout(self::$cookieName, self::$cookiePassword);  // TODO    
+            }
+            // Else if the session is valid
+            else if($this->session->getSession(self::$sessionId) != "" && $this->isSessionCorrect($this->session->getSession(self::$sessionId)) == true)
+            {
+                $response = $this->generateLogoutButtonHTML("");
+            }
+            // Else if there is valid cookies
+            else if($this->isCookies())
+            {
+                // If the cookies is valid, login the person
+                if($this->authenticateCookies(self::$cookiePassword))
+                {
+                    self::$user->login();
+                    $response = $this->generateLogoutButtonHTML($this->feedback->getWelcomeCookieMsg());
+                }
+                // Else return to login form with wrong cookies error text
+                else
+                {
+                    self::$user->logout();
+                    $response = $this->generateLoginFormHTML($this->feedback->getWrongInformationCookies(),"");
+                }
+                
+            }
+            else
+            {
+                // If the login button is pushed
+                if($this->post->isButtonPushed(self::$login))
+                {
+                    $response = $this->login();       
+                }
+                else
+                {
+                    $response = $this->generateLoginFormHTML("","");
+                }
+            }
+            return $response;
    }
 }

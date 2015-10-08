@@ -11,6 +11,7 @@ class RegisterController
     private $exceptionMsg;
     private $userFile;
     private $feedback;
+    private static $newRegistration = "RegisterController::newRegistration";
     /**
      * Initialize objects
      */
@@ -74,8 +75,10 @@ class RegisterController
         }
         if(count($errors) == 0)
         {
+            $_SESSION[self::$newRegistration] = "yes";
             $this->saveUser($username, $password);
             $this->userFile->addToTemp($username);
+            header("location:?");
         }
         return $errors;
     }
@@ -93,6 +96,15 @@ class RegisterController
         $username = $this->userFile->getTempUsername();
         $this->userFile->clearTemp();
         return $username;
+    }
+    public function isTempUsernameExist()
+    {
+        if(isset($_SESSION[self::$newRegistration]))
+        {
+            unset($_SESSION[self::$newRegistration]);
+            return true;
+        }
+        return false;
     }
     /**
      * Check the array and translate the error codes to strings

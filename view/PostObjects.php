@@ -38,5 +38,12 @@ class PostObjects
     {
         return $_POST[$POSTName];
     }
-
+    public function setString($name, $string)
+    {
+        $_POST[$name] = $string;
+    }
+    public function unsetString($name)
+    {
+        unset($_POST[$name]);
+    }
 }
