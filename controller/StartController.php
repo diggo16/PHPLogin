@@ -94,6 +94,9 @@ class StartController
         
         $this->layoutView->newRender($this->view, $this->dateTimeView, $this->registerView,$this->user);
     }
+    /**
+     * Change the current user
+     */
     public function changeUser()
     {
         
@@ -124,20 +127,34 @@ class StartController
             
         }
     }
+    /**
+     * Register new user
+     */
     public function register()
     {
         $username = $this->registerView->getUsername();
         $password = $this->registerView->getPassword();
         $this->errors = $this->registerController->registerUser($username, $password, $this->registerView->getRepeatPassword());     
     }
+    /**
+     * Check if the user is trying to log in
+     * @return boolean isLoggingIn
+     */
     private function isLoggingIn()
     {
         return $this->loginView->isLoggedInButtonPushed();
     }
+    /**
+     * Check if the user is logging out
+     * @return boolean
+     */
     private function isLoggingOut()
     {
         return $this->loginView->isLoggedOutButtonPushed();
     }
+    /**
+     * Try to log in the user
+     */
     private function login()
     {
 
@@ -163,6 +180,9 @@ class StartController
         
         
     }
+    /**
+     * Set session id if the user is logged in
+     */
     private function setSession()
     {
         if($this->user->isLoggedIn())
