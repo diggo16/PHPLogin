@@ -34,7 +34,11 @@ class Session
      */
     public function destroySession()
     {
-        session_destroy();
+        if(session_id() != '') 
+        {
+            session_destroy();
+        }
+        
     }
     /**
      * Remove the session $name

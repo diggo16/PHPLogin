@@ -16,9 +16,11 @@ class StartController
     private $post;
     private $feedback;
     private $server;
+    private $cookies;
     //model
     private $user;
     private $userFile;
+    private $random;
     //controller
     private $loginController;
     private $registerController;
@@ -38,6 +40,8 @@ class StartController
         require_once('view/Server.php');
         require_once('view/HTMLView.php');
         require_once('controller/RegisterController.php');
+        require_once('model/RandomString.php');
+        require_once('view/Cookies.php');
         
         //CREATE OBJECTS OF THE VIEWS
         $this->loginView = new LoginView();
@@ -48,9 +52,11 @@ class StartController
         $this->feedback = new Feedback();
         $this->server = new Server();
         $this->view = new HTMLView();
+        $this->cookies = new Cookies();
         //Create objects of the model
         $this->user = $user;
         $this->userFile = new UserFile($this->server->getDocumentRootPath());
+        $this->random = new RandomString();
         //controllers
         $this->loginController = $loginController;
         $this->registerController = new RegisterController();
@@ -62,7 +68,7 @@ class StartController
      */
     public function showWebsite()
     {    
-        $temp = $this->registerController->getTempUsername();
+        $temp = $this->registerController->getTempUsername();   // new registered username
         //Change previous message
         if($temp == "")
         {
@@ -91,15 +97,13 @@ class StartController
         {
             $this->view->setView($this->loginView->responseWithUser($this->user));
         }
-        
         $this->layoutView->newRender($this->view, $this->dateTimeView, $this->registerView,$this->user);
     }
     /**
      * Change the current user
      */
     public function changeUser()
-    {
-        
+    {       
         if($this->isLoggingIn())
         {
             $this->login();
@@ -109,14 +113,13 @@ class StartController
             if($this->userFile->getPreviousMessage() == $this->feedback->getByeMsg())
             { 
                 $this->user->setNewInfo("", "", false, "");
-                $this->loginController->logout("", "", "", $this->loginView->getCookieName());                
+                $this->loginController->logout($this->loginView->getCookieName());                
             }
             else
             {
                 $this->user->setNewInfo("", "", false, $this->feedback->getByeMsg());
-                $this->loginController->logout("", "", "", $this->loginView->getCookieName()); 
-            }
-            
+                $this->loginController->logout($this->loginView->getCookieName()); 
+            }           
         }
         else if($this->loginController->isSessionCorrect($this->loginView->getSessionId()))
         {
@@ -124,7 +127,22 @@ class StartController
         }
         else if($this->loginView->isCookies())
         {
-            
+            if($this->loginController->authenticateCookies($this->loginView->getCookieName()))
+            {
+                $this->setSession();
+                if($this->userFile->getPreviousMessage() == $this->feedback->getWelcomeCookieMsg())
+                { 
+                    $this->user->setNewInfo("", "", true, "");           
+                }
+                else
+                {
+                    $this->user->setNewInfo("", "", true, $this->feedback->getWelcomeCookieMsg());
+                }           
+            }
+            else
+            {
+                $this->user->setNewInfo("", "", false, $this->feedback->getWrongInformationCookies());        
+            }
         }
     }
     /**
@@ -157,12 +175,15 @@ class StartController
      */
     private function login()
     {
-
         $username = $this->loginView->getUsername();
         $password = $this->loginView->getPassword();
         if($this->loginView->isKeepChecked())
         {
-            $this->user = $this->loginController->authenticateWithSavedCredentials($username, $password, "", $this->loginView->getCookieName());
+            $this->user = $this->loginController->authenticateWithSavedCredentials($username, $password,  $this->loginView->getCookieName());
+            if($this->user->isLoggedIn())
+            {
+                $this->user->setMessage($this->feedback->getWelcomeAndRemembered());
+            }
             $this->setSession();
         }
         else 
@@ -174,11 +195,17 @@ class StartController
         {
             if($this->userFile->getPreviousMessage() != $this->feedback->getWelcomeMsg())
             {
-                $this->user->setMessage($this->feedback->getWelcomeMsg());
+                if($this->loginView->isKeepChecked())
+                {
+                    $message = $this->feedback->getWelcomeAndRemembered();
+                }
+                else
+                {
+                    $message = $this->feedback->getWelcomeMsg();
+                }
+                $this->user->setMessage($message);
             }            
         }
-        
-        
     }
     /**
      * Set session id if the user is logged in

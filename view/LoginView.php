@@ -104,7 +104,7 @@ class LoginView {
         public function isCookies()
         {
             // If the cookies is not empty
-            if($this->cookies->getCookie(self::$cookieName) !="" && $this->cookies->getCookie(self::$cookiePassword))
+            if($this->cookies->getCookie(self::$cookiePassword))
             {
                 return true;
             }
@@ -172,5 +172,18 @@ class LoginView {
                 return true;
             }
             return false;
+        }
+        public function loginWithMessage($message, $loggedIn)
+        {
+            $html = "";
+            if($loggedIn)
+            {
+                $html = $this->generateLogoutButtonHTML($message);
+            }
+            else
+            {
+                $html = $this->generateLoginFormHTML($message, "");
+            }
+            return $html;
         }
 }
