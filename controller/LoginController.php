@@ -185,4 +185,12 @@ class LoginController
        $this->correctUsers = $this->userFile->getUsers();
        $this->loginRules = new LoginRules($this->correctUsers);
    }
+   public function getSessionId()
+   {
+       return $this->session->getSession($this->loginView->getSessionIdName());
+   }
+   public function setSessionId($id)
+   {
+       $this->session->setSession($this->loginView->getSessionIdName(), $id);
+   }
 }

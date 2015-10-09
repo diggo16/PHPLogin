@@ -122,7 +122,7 @@ class StartController
             $this->loginController->logout($this->loginView->getCookieName());      // Log out the user
         }
         // If there is a correct session
-        else if($this->loginController->isSessionCorrect($this->loginView->getSessionId()))
+        else if($this->loginController->isSessionCorrect($this->loginController->getSessionId()))
         {
             $this->user->setNewInfo("", "", true, "");
         }
@@ -213,7 +213,7 @@ class StartController
         if($this->user->isLoggedIn())
         {
             $sessionId = $this->user->getSessionId();
-            $this->loginView->setSessionId($sessionId); 
+            $this->loginController->setSessionId($sessionId); 
         }   
     }
     /**
