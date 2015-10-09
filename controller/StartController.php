@@ -145,7 +145,7 @@ class StartController
     /**
      * Register new user
      */
-    public function register()
+    private function register()
     {
         $username = $this->registerView->getUsername();
         $password = $this->registerView->getPassword();
@@ -192,6 +192,7 @@ class StartController
         {
             if($this->userFile->getPreviousMessage() != $this->feedback->getWelcomeMsg())
             {
+                // If keep checkbox is checked
                 if($this->loginView->isKeepChecked())
                 {
                     $message = $this->feedback->getWelcomeAndRemembered();
