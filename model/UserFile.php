@@ -51,7 +51,6 @@ class UserFile
         {
             while (false !== ($entry = readdir($handle))) 
             {
-
                 if ($entry != "." && $entry != "..") 
                 { 
                     $file = file_get_contents(self::$filePath . "/" . $entry);
@@ -71,30 +70,19 @@ class UserFile
         closedir($handle);
         }  
         return $users;
-
     }
     /**
      * Replace the file with a user
      * @param var $sessionId
      * @param var $cookiePassword
      */
-    public function setUserFileWithSession($sessionId, $newSession, $newCookie) //TODO Refactor methods below
+    public function setUserFileWithSession($sessionId, $newSession, $newCookie)
     {
         $user = $this->getUserFromSession($sessionId);
         if($user != null)
         {
             $this->addUser($user->getUsername(), $user->getPassword(), $newSession, $newCookie);
-        }
-        
-    }
-    public function setUserFileWithUsername($username, $newSession, $newCookie) 
-    {
-      $user = $this->getUserFromUsername($username);
-      if($user != null)
-      {
-          $this->addUser($user->getUsername(), $user->getPassword(), $newSession, $newCookie);
-      }
-      
+        }       
     }
     /**
      * Add a user to the file
@@ -120,7 +108,52 @@ class UserFile
                       $separator . $cookiePassword;
         file_put_contents($filename, $fileString);    // Put the new string in the file
     }
-    public function getUserFromSession($sessionId)
+    /**
+     * Add the username to the temp file
+     * @param string $username
+     */
+    public function addToTemp($username)
+    {
+        file_put_contents(self::$tempFilePath, $username);
+    }
+    /**
+     * Return the username in the file temp
+     * @return string tempUsername
+     */
+    public function getTempUsername()
+    {
+        return trim(file_get_contents(self::$tempFilePath)); 
+    }
+    /**
+     * Clear the file temp
+     */
+    public function clearTemp()
+    {
+        file_put_contents(self::$tempFilePath, "");
+    }
+    /**
+     * Set the string in the file PreviousMessage to $message
+     * @param string $message
+     */
+    public function setPreviousMessage($message)
+    {
+        $filePath = self::$webhostFilePath . self::$messageFilePath;
+        file_put_contents($filePath, $message);
+    }
+    /**
+     * Get the string from the file PreviousMessage
+     * @return string previousMessage
+     */
+    public function getPreviousMessage()
+    {
+        return file_get_contents($filePath = self::$webhostFilePath . self::$messageFilePath);
+    }
+    /**
+     * Return the user with the session id $sessionId
+     * @param string $sessionId
+     * @return User $user
+     */
+    private function getUserFromSession($sessionId)
     {
         $users = $this->getUsers();
         foreach($users as $user)
@@ -130,37 +163,6 @@ class UserFile
               return $user;
           }
         }
-    }
-    public function getUserFromUsername($username)
-    {
-        $users = $this->getUsers();
-        foreach($users as $user)
-        {
-          if($user->getUsername() == $username)
-          {
-              return $user;
-          }
-        }
-    }
-    public function addToTemp($username)
-    {
-        file_put_contents(self::$tempFilePath, $username);
-    }
-    public function getTempUsername()
-    {
-        return trim(file_get_contents(self::$tempFilePath)); 
-    }
-    public function clearTemp()
-    {
-        file_put_contents(self::$tempFilePath, "");
-    }
-    public function setPreviousMessage($message)
-    {
-        $filePath = self::$webhostFilePath . self::$messageFilePath;
-        file_put_contents($filePath, $message);
-    }
-    public function getPreviousMessage()
-    {
-        return file_get_contents($filePath = self::$webhostFilePath . self::$messageFilePath);
+        return null;
     }
 }
