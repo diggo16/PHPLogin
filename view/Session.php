@@ -37,8 +37,7 @@ class Session
         if(session_id() != '') 
         {
             session_destroy();
-        }
-        
+        }      
     }
     /**
      * Remove the session $name
@@ -47,23 +46,6 @@ class Session
     public function removeSession($name)
     {
         unset($_SESSION[$name]);
-    }
-    /**
-     * Check if the session exists
-     * @param string $sessionName
-     * @param string $sessionPassword
-     * @return boolean
-     */
-    public function isSessionExist($sessionName, $sessionPassword)
-    {
-        $username = $this->getSession($sessionName);
-        $password = $this->getSession($sessionPassword);
-      
-        if($username !== "" && $password !== "")
-        {
-            return true;
-        }
-        return false;
     }
      /**
      * Make the string secure from unwanted html code
