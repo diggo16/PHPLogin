@@ -97,7 +97,7 @@ class StartController
         {
             $this->view->setView($this->loginView->responseWithUser($this->user));
         }
-        $this->layoutView->newRender($this->view, $this->dateTimeView, $this->registerView,$this->user);
+        $this->layoutView->render($this->view, $this->dateTimeView, $this->registerView,$this->user);
     }
     /**
      * Change the current user
