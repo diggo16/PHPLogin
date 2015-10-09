@@ -80,33 +80,6 @@ class RegisterView
 				</fieldset>";
     }
     /**
-     * Generate a register text link in html
-     * @return string htmlString
-     */
-    public function generateRegisterLink() 
-    {
-        return $this->generateLink(self::$register, "Register a new user");
-    }
-    /**
-     * Generate a back to login text link in html
-     * @return string htmlString
-     */
-    public function generateBackToLoginLink()
-    {
-        return $this->generateLink("", "Back to login");
-    }
-    /**
-     * Generate a html link
-     * @param string $link
-     * @param string $text
-     * @return string htmlLink
-     */
-    private function generateLink($link, $text)
-    {
-        $response = "<a href='?" . $link . "'>" . $text . "</a>";
-        return $response;
-    }
-    /**
      * Check if the register text link is clicked
      * @return boolean isRegisterTextClicked
      */
@@ -117,26 +90,6 @@ class RegisterView
             return true;
         }
         return false;
-    }
-    /**
-     * Check if there should be a text link in the response;
-     * @param boolean $isLoggedIn
-     * @return string htmlString
-     */
-    public function generateTextLink($isLoggedIn)
-    {
-        $response = "";
-        // If the user is not logged in
-        if(!$isLoggedIn)
-        {
-            $response = $this->generateRegisterLink();
-        }
-        // If the register text is clicked
-        if($this->isRegisterTextClicked())
-        {
-            $response = $this->generateBackToLoginLink();
-        }
-        return $response;
     }
     /**
      * Get the string for a successful registration
@@ -181,5 +134,52 @@ class RegisterView
            return true;
        }
        return false;
+    }
+     /**
+     * Check if there should be a text link in the response;
+     * @param boolean $isLoggedIn
+     * @return string htmlString
+     */
+    public function generateTextLink($isLoggedIn)
+    {
+        $response = "";
+        // If the user is not logged in
+        if(!$isLoggedIn)
+        {
+            $response = $this->generateRegisterLink();
+        }
+        // If the register text is clicked
+        if($this->isRegisterTextClicked())
+        {
+            $response = $this->generateBackToLoginLink();
+        }
+        return $response;
+    }
+     /**
+     * Generate a register text link in html
+     * @return string htmlString
+     */
+    private function generateRegisterLink() 
+    {
+        return $this->generateLink(self::$register, "Register a new user");
+    }
+    /**
+     * Generate a back to login text link in html
+     * @return string htmlString
+     */
+    private function generateBackToLoginLink()
+    {
+        return $this->generateLink("", "Back to login");
+    }
+    /**
+     * Generate a html link
+     * @param string $link
+     * @param string $text
+     * @return string htmlLink
+     */
+    private function generateLink($link, $text)
+    {
+        $response = "<a href='?" . $link . "'>" . $text . "</a>";
+        return $response;
     }
 }
