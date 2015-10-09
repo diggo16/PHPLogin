@@ -64,7 +64,7 @@ class StartController
         $this->errors = array();
     }
     /**
-     * Show the website
+     * Check for button clicks and new registration then echo the html code through LayoutView
      */
     public function showWebsite()
     {    
@@ -74,71 +74,68 @@ class StartController
         {
             $this->userFile->setPreviousMessage($this->user->getMessage());
         }
+        // A new registration is done and should show the username in the login form
         else
         {
             $this->userFile->setPreviousMessage("");
             $this->user->setNewInfo($temp, "", false, $this->feedback->getSuccessfulRegistration());
             $this->view->setView($this->loginView->responseWithUser($this->user));
         }
+        // Submit button in register form is clicked
         if($this->registerView->isSubmitButtonClicked())
         {
             $this->register();
+            // Registration was successful
             if($this->registerController->isNewUser())
             {               
                 header("location:?");
             }
         }
+        // Register text is clicked
         if($this->registerView->isRegisterTextClicked())
         {
             $this->view->setView($this->registerView->generateRegisterForm($this->registerController->getErrorMessages($this->errors)));
             $this->errors = array();
         }
+        // Get html code from LoginView depending on the users information
         else if($temp == "")
         {
             $this->view->setView($this->loginView->responseWithUser($this->user));
         }
+        // Send the views and user to the LayoutView to echo the html code
         $this->layoutView->render($this->view, $this->dateTimeView, $this->registerView,$this->user);
     }
     /**
      * Change the current user
      */
     public function changeUser()
-    {       
+    {   
+        // User has clicked log in button
         if($this->isLoggingIn())
         {
             $this->login();
         }
+        // User has clicked log out button
         else if($this->isLoggingOut())
         {
-            if($this->userFile->getPreviousMessage() == $this->feedback->getByeMsg())
-            { 
-                $this->user->setNewInfo("", "", false, "");
-                $this->loginController->logout($this->loginView->getCookieName());                
-            }
-            else
-            {
-                $this->user->setNewInfo("", "", false, $this->feedback->getByeMsg());
-                $this->loginController->logout($this->loginView->getCookieName()); 
-            }           
+            $this->isSameMessage($this->feedback->getByeMsg(), false);
+            $this->loginController->logout($this->loginView->getCookieName());      // Log out the user
         }
+        // If there is a correct session
         else if($this->loginController->isSessionCorrect($this->loginView->getSessionId()))
         {
             $this->user->setNewInfo("", "", true, "");
         }
+        // If there is cookies
         else if($this->loginView->isCookies())
         {
+            // If the cookie is correct, login the user
             if($this->loginController->authenticateCookies($this->loginView->getCookieName()))
             {
                 $this->setSession();
-                if($this->userFile->getPreviousMessage() == $this->feedback->getWelcomeCookieMsg())
-                { 
-                    $this->user->setNewInfo("", "", true, "");           
-                }
-                else
-                {
-                    $this->user->setNewInfo("", "", true, $this->feedback->getWelcomeCookieMsg());
-                }           
+                $this->isSameMessage($this->feedback->getWelcomeCookieMsg(), true);          
             }
+            // Set error in cookies message
             else
             {
                 $this->user->setNewInfo("", "", false, $this->feedback->getWrongInformationCookies());        
@@ -175,22 +172,22 @@ class StartController
      */
     private function login()
     {
+        // Get the username and password
         $username = $this->loginView->getUsername();
         $password = $this->loginView->getPassword();
+        // If the keep checkbox is checked
         if($this->loginView->isKeepChecked())
         {
             $this->user = $this->loginController->authenticateWithSavedCredentials($username, $password,  $this->loginView->getCookieName());
-            if($this->user->isLoggedIn())
-            {
-                $this->user->setMessage($this->feedback->getWelcomeAndRemembered());
-            }
             $this->setSession();
         }
+        // If the user don't want to save cookies
         else 
         {
             $this->user = $this->loginController->authenticate($username, $password);
             $this->setSession();
         }
+        // If the user is logged in, set correct message
         if($this->user->isLoggedIn())
         {
             if($this->userFile->getPreviousMessage() != $this->feedback->getWelcomeMsg())
@@ -212,10 +209,30 @@ class StartController
      */
     private function setSession()
     {
+        // If the user is logged in
         if($this->user->isLoggedIn())
         {
             $sessionId = $this->user->getSessionId();
             $this->loginView->setSessionId($sessionId); 
         }   
+    }
+    /**
+     * Check if the message is the same as the previous message.
+     * If it is, clear the message
+     * @param string $message
+     * @param boolean $isLoggedIn
+     */
+    private function isSameMessage($message, $isLoggedIn)
+    {
+        // Clear the message if they are the same message
+        if($this->userFile->getPreviousMessage() == $message)
+        { 
+            $this->user->setNewInfo("", "", $isLoggedIn, "");           
+        }
+        // Else add the message
+        else
+        {
+            $this->user->setNewInfo("", "", $isLoggedIn, $message);
+        }           
     }
 }
