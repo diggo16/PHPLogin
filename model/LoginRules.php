@@ -60,15 +60,4 @@ class LoginRules
        }
        return false;
    }
-   public function getUserFromCookies($cookiePass)
-   {
-       foreach ($this->correctUser as $user) 
-       {
-            if($user->getCookiePassword() == $cookiePass)
-            {
-                return $user;
-            }
-       }
-       return null;
-   }
 }
