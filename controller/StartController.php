@@ -111,12 +111,12 @@ class StartController
     public function changeUser()
     {   
         // User has clicked log in button
-        if($this->isLoggingIn())
+        if($this->loginView->isLoggedInButtonPushed())
         {
             $this->login();
         }
         // User has clicked log out button
-        else if($this->isLoggingOut())
+        else if($this->loginView->isLoggedOutButtonPushed())
         {
             $this->isSameMessage($this->feedback->getByeMsg(), false);
             $this->loginController->logout($this->loginView->getCookieName());      // Log out the user
@@ -150,22 +150,6 @@ class StartController
         $username = $this->registerView->getUsername();
         $password = $this->registerView->getPassword();
         $this->errors = $this->registerController->registerUser($username, $password, $this->registerView->getRepeatPassword());     
-    }
-    /**
-     * Check if the user is trying to log in
-     * @return boolean isLoggingIn
-     */
-    private function isLoggingIn()
-    {
-        return $this->loginView->isLoggedInButtonPushed();
-    }
-    /**
-     * Check if the user is logging out
-     * @return boolean
-     */
-    private function isLoggingOut()
-    {
-        return $this->loginView->isLoggedOutButtonPushed();
     }
     /**
      * Try to log in the user
