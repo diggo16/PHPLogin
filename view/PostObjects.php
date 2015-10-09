@@ -47,12 +47,4 @@ class PostObjects
     {
         $_POST[$name] = $string;
     }
-    public function unsetString($name)
-    {
-        if(isset($_POST[$name]))
-        {
-            unset($_POST[$name]);
-        }
-        
-    }
 }
